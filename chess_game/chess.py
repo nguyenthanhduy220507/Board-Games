@@ -10,7 +10,7 @@ class Chess:
         self.current_player = player1
         self.game_over = False
 
-        self.my_surface = pygame.Surface((300, 200))
+        self.my_surface = pygame.Surface((640, 640))
         self.my_surface.fill((255, 255, 255))
 
     def play_game(self):
