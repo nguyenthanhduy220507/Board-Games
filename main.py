@@ -1,8 +1,9 @@
 import pygame
 import pygame_menu
-from chess_game.chess import Chess
+
 from chess_game.chess_menu import ChessMenu
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
+from server import ServerCreate
 
 
 class MainMenu:
@@ -10,26 +11,16 @@ class MainMenu:
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        # Load image
-        default_image = pygame_menu.BaseImage(
-            image_path=pygame_menu.baseimage.IMAGE_EXAMPLE_PYGAME_MENU
-        ).scale(0.2, 0.2)
-        
-        self.clock = pygame.time.Clock()
         # Set theme
         theme = pygame_menu.themes.THEME_DARK.copy()
         theme.title = False
 
         self.modes = {
             1: {
-                'image': default_image.copy(),
-                'text': 'Setting caro game',
-                'action': lambda: self.start_game(ChessMenu()),
+                'action': lambda: self.start_game('caro'),
             },
             2: {
-                'image': default_image.copy(),
-                'text': 'Setting chess game',
-                'action': lambda: self.start_game(ChessMenu())
+                'action': lambda: self.start_game('chess')
             },
         }
 
@@ -64,44 +55,32 @@ class MainMenu:
             font_name=pygame_menu.font.FONT_OPEN_SANS,
             onchange=self.on_selector_change
         ).translate(10, 150)
-        
-        self.image_widget = self.menu.add.image(
-            image_path=self.modes[1]['image'],
-            padding=(25, 0, 0, 0)  # top, right, bottom, left
-        )
-
-        self.item_description_widget = self.menu.add.label(title='')
 
         self.create_button = self.menu.add.button(
-            title='Create',
+            title='Start',
             align=pygame_menu.locals.ALIGN_LEFT,
             font_name=pygame_menu.font.FONT_OPEN_SANS,
-            action=lambda: self.start_game(ChessMenu())
-        ).translate(10, 0)
+            action=lambda: self.start_game('caro')
+        ).translate(10, 160)
 
         self.quit_button = self.menu.add.button(
             title='Quit',
             align=pygame_menu.locals.ALIGN_LEFT,
             font_name=pygame_menu.font.FONT_OPEN_SANS,
             action=pygame_menu.events.EXIT
-        ).translate(10, 0)
-
-        self.surface_widget = pygame_menu.widgets.SurfaceWidget(surface=pygame.Surface((0, 0)))
-        self.menu.add.generic_widget(self.surface_widget)
+        ).translate(10, 170)
     
 
     def _update_from_selection(self, index: int):
         self.current = index
-        self.image_widget.set_image(self.modes[index]['image'])
-        self.item_description_widget.set_title(self.modes[index]['text'])
-        self.create_button.update_callback(self.modes[index]['action'])
 
     def on_selector_change(self, selected, value):
         print('Selected data:', selected)
-        self._update_from_selection(value)
+        self.create_button.update_callback(self.modes[value]['action'])
 
-    def start_game(self, game_menu):
-        game_menu.run()
+    def start_game(self, game_choice):
+        server = ServerCreate(game_choice)
+        server.run()
     
     def run(self):
         self.menu.mainloop(self.screen)
