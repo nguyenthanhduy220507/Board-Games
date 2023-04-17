@@ -10,10 +10,14 @@ class FlagBox(Square):
     # vẽ sự kiên X O
     def vehinh(self,screen):
         super().vehinh(screen)
-        dx = (self.x2 - self.x1)/4 # độ dài của cạnh /4
-        dy = (self.y2 - self.y1)/4
+        # dx = (self.x2 - self.x1)/4 # độ dài của cạnh /4
+        # dy = (self.y2 - self.y1)/4
         if self.giatri == 1: #hình tròn
-            pygame.draw.ellipse(screen, (255, 255, 255), (self.x1 ,self.y1 , self.x2, self.y2))
+                width = abs(self.x2 - self.x1)
+                height = abs(self.y2 - self.y1)
+                radius = min(width, height) // 2
+                center = (self.x1 + width // 2, self.y1 + height // 2)
+                pygame.draw.circle(screen, (119, 192, 74), center, radius)
         if self.giatri == -1: # hình square
-            pygame.draw.line(screen, (255, 255, 255), (self.x1, self.y1 ), (self.x2 , self.y2 ), 10)
-            pygame.draw.line(screen, (255, 255, 255), (self.x2, self.y1 ), (self.x1 , self.y2 ), 10)
+            pygame.draw.line(screen, (255, 0, 0), (self.x1, self.y1 ), (self.x2 , self.y2 ), 3)
+            pygame.draw.line(screen, (255, 0, 0), (self.x2, self.y1 ), (self.x1 , self.y2 ), 3)

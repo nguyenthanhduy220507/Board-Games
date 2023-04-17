@@ -16,7 +16,6 @@ class Board:
                 my = self.value_y_first + i * self.value_length_arr_2
                 line.append(FlagBox(mx, my, mx + self.value_length_arr_2, my + self.value_length_arr_2))
             self.arr.append(line)
-            print("2")
 
     #vẽ số dòng và cột 
     def vehinh(self,cas):
@@ -168,12 +167,19 @@ class Board:
             return 0
 
 
-    def alert_wining(self):
+    def alert_wining(self,screen):
         str = "PLayer "
         if self.player == -1:
             str += "X Winner!!!"
         else:
             str += "O Winner!!!"
-        font = pygame.font.SysFont('Times New Roman', 15, True, False)
-        text = font.render(str, True, (0, 0, 255)) # tạo chữ màu xanh lá cây
-        pygame.screen.blit(text, (100, 10)) # hiển thị chữ lên màn hình tại tọa độ (100,10)
+
+        font = pygame.font.Font(None, 36)
+        text = font.render(str, 1, (0, 0, 0))
+        textpos = text.get_rect(centerx=320, centery=320)
+        screen.blit(text, textpos)
+        pygame.display.flip()
+        # cas.create_text(100,10,fill="darkblue",font="Times 15 italic bold", text = str)
+        # font = pygame.font.SysFont('Times New Roman', 15, True, False)
+        # text = font.render(str, True, (0, 0, 255)) # tạo chữ màu xanh lá cây
+        # pygame.screen.blit(text, (100, 10)) # hiển thị chữ lên màn hình tại tọa độ (100,10)
