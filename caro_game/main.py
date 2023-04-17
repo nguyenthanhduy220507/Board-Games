@@ -1,25 +1,33 @@
-from tkinter import *
+import pygame
+from pygame.locals import *
 from caro_game.board import *
 
 
 class Caro:
     def __init__(self, connection):
         self.connection = connection
-        self.window = Tk()
-        self.window.title("Caro")
-        
-        self.cas = Canvas(self.window, height=640, width=640)
-        self.cas.pack()
+        pygame.init()
+        self.window = pygame.display.set_mode((640, 640))
+        pygame.display.set_caption("Caro")
+        self.clock = pygame.time.Clock()
 
+        self.cas = self.window
         self.banco = Board()
         self.banco.vehinh(self.cas)
         self.banco.condition = 1
 
-        self.cas.bind_all('<Button-1>', self.click_mouse_button)
-
     def clicked(self, x, y):
         self.banco.click_flag_box(self.cas, x, y)
 
-    def click_mouse_button(self, event):
-        self.clicked(event.x, event.y)
-        self.connection.send(f'{event.x},{event.y}'.encode('utf-8'))
+    def run(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    return
+                elif event.type == MOUSEBUTTONDOWN:
+                    x, y = event.pos
+                    self.clicked(x, y)
+                    self.connection.send(f'{x},{y}'.encode('utf-8'))
+            pygame.display.update()
+            self.clock.tick(60)
