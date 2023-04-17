@@ -6,7 +6,7 @@ class Caro:
     def __init__(self, connection):
         self.connection = connection
         self.window = Tk()
-        self.window.title("Chat")
+        self.window.title("Caro")
         
         self.cas = Canvas(self.window, height=640, width=640)
         self.cas.pack()

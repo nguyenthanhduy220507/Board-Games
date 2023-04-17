@@ -45,7 +45,7 @@ class Server:
     def receive(self):
         while True:
             try:
-                message = self.sock.recv(1024).decode('utf-8').split(',')
+                message = self.conn.recv(1024).decode('utf-8').split(',')
                 x = int(message[0])
                 y = int(message[1])
                 self.gui.clicked(x, y)
