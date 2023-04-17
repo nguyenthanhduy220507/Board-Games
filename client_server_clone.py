@@ -20,8 +20,8 @@ class Client:
         while True:
             try:
                 message = self.sock.recv(1024).decode('utf-8').split(',')
-                x = message[0]
-                y = message[1]
+                x = int(message[0])
+                y = int(message[1])
                 self.gui.clicked(x, y)
             except OSError:
                 break
@@ -46,8 +46,8 @@ class Server:
         while True:
             try:
                 message = self.sock.recv(1024).decode('utf-8').split(',')
-                x = message[0]
-                y = message[1]
+                x = int(message[0])
+                y = int(message[1])
                 self.gui.clicked(x, y)
             except OSError:
                 break
