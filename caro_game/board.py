@@ -16,6 +16,7 @@ class Board:
                 my = self.value_y_first + i * self.value_length_arr_2
                 line.append(FlagBox(mx, my, mx + self.value_length_arr_2, my + self.value_length_arr_2))
             self.arr.append(line)
+            print("2")
 
     #vẽ số dòng và cột 
     def vehinh(self,cas):
