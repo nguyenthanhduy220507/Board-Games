@@ -4,14 +4,15 @@ import tkinter as tk
 from threading import Thread
 
 class Client:
-    def __init__(self, host, port):
+    def __init__(self, host, port, username):
         self.host = host
         self.port = port
+        self.username = username
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((self.host, self.port))
 
-        self.gui = GUI(self.sock)
+        self.gui = GUI(self.sock, self.username)
 
         self.receive_thread = Thread(target=self.receive)
         self.receive_thread.start()
@@ -25,9 +26,10 @@ class Client:
                 break
 
 class Server:
-    def __init__(self, host, port):
+    def __init__(self, host, port, username):
         self.host = host
         self.port = port
+        self.username = username
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind((self.host, self.port))
@@ -35,7 +37,7 @@ class Server:
 
         self.conn, self.addr = self.sock.accept()
 
-        self.gui = GUI(self.conn)
+        self.gui = GUI(self.conn, self.username)
 
         self.receive_thread = Thread(target=self.receive)
         self.receive_thread.start()
