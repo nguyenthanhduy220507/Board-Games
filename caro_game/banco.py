@@ -39,7 +39,7 @@ class BanCo:
 
 
     def check_winning(self, mi, mj):
-        if self.check_winning_vertical(mi, mj) == 1 or self.check_winning_horizontal(mi, mj) ==1:
+        if self.check_winning_vertical(mi, mj) == 1 or self.check_winning_horizontal(mi, mj) ==1 or self.check_main_diagonal(mi,mj):
             return 1
         else:
             return 0
