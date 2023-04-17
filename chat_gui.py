@@ -63,7 +63,7 @@ class GUI:
         self.message_frame = ctk.CTkFrame(self.window)
         self.scrollbar = ctk.CTkScrollbar(self.message_frame)
 
-        self.message_list = ctk.CTkTextbox(master=self, width=400)
+        self.message_list = ctk.CTkTextbox(master=self.window, width=400)
         self.message_list.pack(fill='both')
 
         self.message_frame.pack()
