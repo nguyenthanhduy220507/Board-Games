@@ -39,10 +39,41 @@ class BanCo:
 
 
     def check_winning(self, mi, mj):
-        if self.check_winning_vertical(mi, mj) == 1 or self.check_winning_horizontal(mi, mj) ==1 or self.check_main_diagonal(mi,mj):
+        if self.check_winning_vertical(mi, mj) == 1 or self.check_winning_horizontal(mi, mj) ==1 or self.check_main_diagonal(mi,mj) or self.check_secondary_diagonal(mi,mj):
             return 1
         else:
             return 0
+    #đường chéo phụ
+    def check_secondary_diagonal(self, mi, mj):
+        count = 0
+        #check lên trên i giảm j tăng
+        i = mi - 1
+        j = mj + 1
+        while (i>= 0 and j < 20):
+            if self.arr[i][j].giatri == self.player:
+                count+=1
+            else:
+                break
+            i = i -1
+            j = j +1
+        #check lên xuống i tăng j giảm
+        i = mi + 1
+        j = mj - 1
+        while (i<20 and j >=0):
+            if self.arr[i][j].giatri == self.player:
+                count+=1
+            else:
+                break
+            i = i + 1
+            j = j - 1
+        #check count
+        if count >=4:
+            return 1
+        else:
+            return 0
+
+
+
     #đường chéo chính
     def check_main_diagonal(self, mi, mj):
         count = 0
