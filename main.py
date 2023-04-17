@@ -3,13 +3,12 @@ import pygame_menu
 
 from chess_game.chess_menu import ChessMenu
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
-from server import ServerCreate
 
 
 class MainMenu:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH // 1.5, SCREEN_HEIGHT // 1.5))
 
         # Set theme
         theme = pygame_menu.themes.THEME_DARK.copy()
@@ -25,8 +24,8 @@ class MainMenu:
         }
 
         self.menu = pygame_menu.Menu(
-            width=SCREEN_WIDTH, 
-            height=SCREEN_HEIGHT, 
+            width=SCREEN_WIDTH // 1.5, 
+            height=SCREEN_HEIGHT // 1.5, 
             title='',
             center_content=False,
             theme=theme,
@@ -79,8 +78,7 @@ class MainMenu:
         self.create_button.update_callback(self.modes[value]['action'])
 
     def start_game(self, game_choice):
-        server = ServerCreate(game_choice)
-        server.run()
+        pass
     
     def run(self):
         self.menu.mainloop(self.screen)
