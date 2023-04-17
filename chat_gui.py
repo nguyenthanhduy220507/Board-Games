@@ -60,19 +60,12 @@ class GUI:
         self.window = ctk.CTk()
         self.window.title("Chat")
 
-        self.message_frame = ctk.CTkFrame(self.window)
-        self.scrollbar = ctk.CTkScrollbar(self.message_frame)
-
-        self.message_list = ctk.CTkTextbox(master=self.window, width=400)
+        self.message_list = ctk.CTkTextbox(master=self.window, width=400, state="disabled")
         self.message_list.pack(fill='both')
 
-        self.message_frame.pack()
-
-        self.entry_field = ctk.CTkEntry(self.window, width=50)
+        self.entry_field = ctk.CTkEntry(self.window, placeholder_text='Chat here')
         self.entry_field.bind('<Return>', self.send_message)
-        self.send_button = ctk.CTkButton(self.window, text='Send', command=self.send_message)
-        self.entry_field.pack()
-        self.send_button.pack()
+        self.entry_field.pack(fill='both', pady=10)
 
     def add_message(self, message):
         self.message_list.insert(ctk.END, message)
@@ -80,8 +73,8 @@ class GUI:
     def send_message(self, event=None):
         message = self.entry_field.get()
         if not message: return
-        self.add_message(f"{self.name}: {message}")
-        self.connection.send(f"{self.name}: {message}".encode('utf-8'))
+        self.add_message(f"{self.name}: {message}\n")
+        self.connection.send(f"{self.name}: {message}\n".encode('utf-8'))
         self.entry_field.delete(0, 'end')
 
 class ChatGUI:
@@ -97,4 +90,3 @@ class ChatGUI:
     def start_server(self):
         server = Server(self.host, self.port, self.username)
         server.gui.window.mainloop()
-
