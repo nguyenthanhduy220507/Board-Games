@@ -60,13 +60,13 @@ def start_client():
     host = input("Enter server IP address: ")
     port = int(input("Enter server port: "))
     client = Client(host, port)
-    client.gui.window.mainloop()
+    client.gui.run()
 
 def start_server():
     host = ''
     port = 55843
     server = Server(host, port)
-    server.gui.window.mainloop()
+    server.gui.run()
 
 if __name__ == "__main__":
     mode = input("Enter 'server' or 'client' to start: ")
