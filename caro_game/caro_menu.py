@@ -2,7 +2,6 @@ import pygame
 import pygame_menu
 
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
-from caro_game.caro import Caro
 
 class CaroMenu:
     def __init__(self):
@@ -26,8 +25,6 @@ class CaroMenu:
             background_inflate=(30, 0),
             float=True  # Widget does not add size to the menu
         ).translate(0, 5)
-        
-        self.surface = Caro(1,2).my_surface
         self.menu.add.surface(self.surface, align=pygame_menu.locals.ALIGN_LEFT).translate(10, 60)
         
         # Bottom scrollable text

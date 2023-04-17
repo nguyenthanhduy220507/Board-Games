@@ -1,5 +1,5 @@
 from tkinter import *
-from caro_game.banco import *
+from caro_game.board import *
 
 
 class Caro:
@@ -11,7 +11,7 @@ class Caro:
         self.cas = Canvas(self.window, height=640, width=640)
         self.cas.pack()
 
-        self.banco = BanCo()
+        self.banco = Board()
         self.banco.vehinh(self.cas)
         self.banco.condition = 1
 

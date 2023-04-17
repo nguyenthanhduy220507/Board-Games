@@ -1,5 +1,5 @@
-from caro_game.hcn import *
-class Oc(Hcn):
+from caro_game.rectangular import *
+class FlagBox(Square):
     giatri =0 # gia tri = 1 lã O , gia tri = -1 là X
     def __init__(self,mx1,my1,mx2,my2):
         super().__init__(mx1,my1,mx2,my2)

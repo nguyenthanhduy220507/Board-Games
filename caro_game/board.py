@@ -1,5 +1,5 @@
-from caro_game.Oc import *
-class BanCo:
+from caro_game.flagbox import *
+class Board:
     player = 1
     winning = 0
     condition = 0

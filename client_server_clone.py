@@ -1,7 +1,7 @@
 import socket
 import tkinter as tk
 from threading import Thread
-from caro_game.chinh import Caro
+from caro_game.main import Caro
 
 class Client:
     def __init__(self, host, port):
