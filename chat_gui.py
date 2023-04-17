@@ -1,4 +1,5 @@
 import socket
+import customtkinter as ctk
 import tkinter as tk
 from threading import Thread
 
@@ -51,53 +52,48 @@ class Server:
         self.conn.sendall(message.encode('utf-8'))
 
 class GUI:
-    def __init__(self, connection):
+    def __init__(self, connection, name):
         self.connection = connection
+        self.name = name
 
-        self.window = tk.Tk()
+        self.window = ctk.CTk()
         self.window.title("Chat")
 
-        self.message_frame = tk.Frame(self.window)
-        self.scrollbar = tk.Scrollbar(self.message_frame)
-        self.message_list = tk.Listbox(self.message_frame, height=15, width=50, yscrollcommand=self.scrollbar.set)
-        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        self.message_list.pack(side=tk.LEFT, fill=tk.BOTH)
-        self.message_list.pack()
+        self.message_frame = ctk.CTkFrame(self.window)
+        self.scrollbar = ctk.CTkScrollbar(self.message_frame)
+
+        self.message_list = ctk.CTkTextbox(master=self, width=400)
+        self.message_list.pack(side=tk.END, fill=tk.BOTH)
+
         self.message_frame.pack()
 
-        self.entry_field = tk.Entry(self.window, width=50)
+        self.entry_field = ctk.CTkEntry(self.window, width=50)
         self.entry_field.bind('<Return>', self.send_message)
-        self.send_button = tk.Button(self.window, text='Send', command=self.send_message)
+        self.send_button = ctk.CTkButton(self.window, text='Send', command=self.send_message)
         self.entry_field.pack()
         self.send_button.pack()
 
     def add_message(self, message):
-        self.message_list.insert(tk.END, message)
+        self.message_list.insert(ctk.END, message)
 
     def send_message(self, event=None):
         message = self.entry_field.get()
-        self.add_message("You: " + message)
-        self.connection.send(message.encode('utf-8'))
+        if not message: return
+        self.add_message(f"{self.name}: {message}")
+        self.connection.send(f"{self.name}: {message}".encode('utf-8'))
         self.entry_field.delete(0, tk.END)
 
-def start_client():
-    host = input("Enter server IP address: ")
-    port = int(input("Enter server port: "))
-    client = Client(host, port)
-    client.gui.window.mainloop()
+class ChatGUI:
+    def __init__(self, host, port, username):
+        self.host = host
+        self.port = port
+        self.username = username
 
-def start_server():
-    host = ''
-    port = 55843
-    server = Server(host, port)
-    server.gui.window.mainloop()
+    def start_client(self):
+        client = Client(self.host, self.port, self.username)
+        client.gui.window.mainloop()
 
-if __name__ == "__main__":
-    mode = input("Enter 'server' or 'client' to start: ")
-    if mode == 'server':
-        print(socket.gethostbyname(socket.gethostname()))
-        start_server()
-    elif mode == 'client':
-        start_client()
-    else:
-        print("Invalid mode. Please enter 'server' or 'client'.")
+    def start_server(self):
+        server = Server(self.host, self.port, self.username)
+        server.gui.window.mainloop()
+
