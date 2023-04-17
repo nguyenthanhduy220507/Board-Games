@@ -13,7 +13,7 @@ class FlagBox(Square):
         dx = (self.x2 - self.x1)/4 # độ dài của cạnh /4
         dy = (self.y2 - self.y1)/4
         if self.giatri == 1: #hình tròn
-            pygame.draw.ellipse(screen, (255, 255, 255), (self.x1 ,self.y1 , self.x, self.y2))
+            pygame.draw.ellipse(screen, (255, 255, 255), (self.x1 ,self.y1 , self.x2, self.y2))
         if self.giatri == -1: # hình square
             pygame.draw.line(screen, (255, 255, 255), (self.x1, self.y1 ), (self.x2 , self.y2 ), 10)
             pygame.draw.line(screen, (255, 255, 255), (self.x2, self.y1 ), (self.x1 , self.y2 ), 10)
