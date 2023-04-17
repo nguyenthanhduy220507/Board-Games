@@ -78,7 +78,7 @@ class GUI:
         message = self.entry_field.get()
         if not message: return
         self.add_message(f"{self.name}: {message}\n")
-        # self.connection.send(f"{self.name}: {message}\n".encode('utf-8'))
+        self.connection.send(f"{self.name}: {message}\n".encode('utf-8'))
         self.entry_field.delete(0, 'end')
 
 class ChatGUI:

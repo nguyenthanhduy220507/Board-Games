@@ -1,4 +1,4 @@
-from caro_game.rectangular import *
+from caro_game.rectangular import Square
 import pygame
 
 class FlagBox(Square):

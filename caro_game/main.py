@@ -1,6 +1,6 @@
 import pygame
-from pygame.locals import *
-from caro_game.board import *
+from pygame.locals import MOUSEBUTTONDOWN, QUIT
+from caro_game.board import Board
 
 
 class Caro:

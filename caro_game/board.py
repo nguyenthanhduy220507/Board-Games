@@ -1,4 +1,4 @@
-from caro_game.flagbox import *
+from caro_game.flagbox import FlagBox
 import pygame
 class Board:
     player = 1
