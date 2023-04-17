@@ -56,24 +56,15 @@ class Server:
         self.conn.sendall(message.encode('utf-8'))
 
 
-def start_client():
-    host = input("Enter server IP address: ")
-    port = int(input("Enter server port: "))
-    client = Client(host, port)
-    client.gui.run()
+class GameGUI:
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
 
-def start_server():
-    host = ''
-    port = 55843
-    server = Server(host, port)
-    server.gui.run()
+    def start_client(self):
+        client = Client(self.host, self.port)
+        client.gui.run()
 
-if __name__ == "__main__":
-    mode = input("Enter 'server' or 'client' to start: ")
-    if mode == 'server':
-        print(socket.gethostbyname(socket.gethostname()))
-        start_server()
-    elif mode == 'client':
-        start_client()
-    else:
-        print("Invalid mode. Please enter 'server' or 'client'.")
+    def start_server(self):
+        server = Server(self.host, self.port)
+        server.gui.run()
