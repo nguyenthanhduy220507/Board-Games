@@ -1,2 +1,4 @@
-h1 = Hcn(50,50, 250,150)
-# h1.vehinh(cas)
+    # def vehinh(self,cas):
+    #     for i in range(0,20):
+    #         for j in range(0,20):
+    #             self.arr[i][j].vehinh(cas)
