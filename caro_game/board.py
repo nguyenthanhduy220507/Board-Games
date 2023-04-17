@@ -1,4 +1,5 @@
 from caro_game.flagbox import *
+import pygame
 class Board:
     player = 1
     winning = 0
@@ -166,10 +167,12 @@ class Board:
             return 0
 
 
-    def alert_wining(self,cas):
+    def alert_wining(self):
         str = "PLayer "
         if self.player == -1:
             str += "X Winner!!!"
         else:
             str += "O Winner!!!"
-        cas.create_text(100,10,fill="darkblue",font="Times 15 italic bold", text = str)
+        font = pygame.font.SysFont('Times New Roman', 15, True, False)
+        text = font.render(str, True, (0, 0, 255)) # tạo chữ màu xanh lá cây
+        pygame.screen.blit(text, (100, 10)) # hiển thị chữ lên màn hình tại tọa độ (100,10)
