@@ -1,4 +1,4 @@
-from hcn import *
+from caro_game.hcn import *
 class Oc(Hcn):
     giatri =0 # gia tri = 1 lã O , gia tri = -1 là X
     def __init__(self,mx1,my1,mx2,my2):

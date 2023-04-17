@@ -1,6 +1,5 @@
 from tkinter import *
-from hcn import *
-from banco import *
+from caro_game.banco import *
 
 
 class Caro:
@@ -15,7 +14,6 @@ class Caro:
         self.banco = BanCo()
         self.banco.vehinh(self.cas)
         self.banco.condition = 1
-        self.h1 = Hcn(50,50, 250,150)
 
         self.cas.bind_all('<Button-1>', self.click_mouse_button)
 

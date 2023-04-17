@@ -1,4 +1,4 @@
-from Oc import *
+from caro_game.Oc import *
 class BanCo:
     player = 1
     winning = 0
