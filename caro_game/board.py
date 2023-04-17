@@ -13,7 +13,7 @@ class Board:
             for j in range(0,20):
                 mx = self.value_x_first + j * self.value_length_arr_2
                 my = self.value_y_first + i * self.value_length_arr_2
-                line.append(Oc(mx, my, mx + self.value_length_arr_2, my + self.value_length_arr_2))
+                line.append(FlagBox(mx, my, mx + self.value_length_arr_2, my + self.value_length_arr_2))
             self.arr.append(line)
 
     #vẽ số dòng và cột 
