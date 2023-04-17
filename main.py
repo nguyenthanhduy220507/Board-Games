@@ -11,7 +11,7 @@ if __name__ == "__main__":
     if mode == 'server':
         username = input("Enter username: ")
         chatGUI = ChatGUI('', 55843, username)
-        gameGUI = GameGUI('', 55843)
+        gameGUI = GameGUI('', 55844)
         print(socket.gethostbyname(socket.gethostname()))
         threading.Thread(target=chatGUI.start_server).start()
         threading.Thread(target=gameGUI.start_server).start()
@@ -20,7 +20,7 @@ if __name__ == "__main__":
         port = int(input("Enter server port: "))
         username = input("Enter username: ")
         chatGUI = ChatGUI(host, port, username)
-        gameGUI = GameGUI(host, port)
+        gameGUI = GameGUI(host, port + 1)
         threading.Thread(target=chatGUI.start_client).start()
         threading.Thread(target=gameGUI.start_client).start()
     else:
