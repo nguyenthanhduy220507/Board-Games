@@ -9,7 +9,6 @@ class FlagBox(Square):
     
     def vehinh(self, screen):
         super().vehinh(screen)
-        square_size = 640/3
         dx = self.square_size / 4 # độ dài của cạnh /4
         dy = self.square_size / 4
         if self.giatri == 1: # hình tròn
