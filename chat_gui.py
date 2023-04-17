@@ -1,6 +1,5 @@
 import socket
 import customtkinter as ctk
-import tkinter as tk
 from threading import Thread
 
 class Client:
@@ -65,7 +64,7 @@ class GUI:
         self.scrollbar = ctk.CTkScrollbar(self.message_frame)
 
         self.message_list = ctk.CTkTextbox(master=self, width=400)
-        self.message_list.pack(side=tk.END, fill=tk.BOTH)
+        self.message_list.pack(fill='both')
 
         self.message_frame.pack()
 
@@ -83,7 +82,7 @@ class GUI:
         if not message: return
         self.add_message(f"{self.name}: {message}")
         self.connection.send(f"{self.name}: {message}".encode('utf-8'))
-        self.entry_field.delete(0, tk.END)
+        self.entry_field.delete(0, 'end')
 
 class ChatGUI:
     def __init__(self, host, port, username):
