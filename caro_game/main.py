@@ -28,6 +28,6 @@ class Caro:
                 elif event.type == MOUSEBUTTONDOWN:
                     x, y = event.pos
                     self.clicked(x, y)
-                    self.connection.send(f'{x},{y}'.encode('utf-8'))
+                    self.connection.send(f'Game::{x}::{y}'.encode('utf-8'))
             pygame.display.update()
             self.clock.tick(60)
