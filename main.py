@@ -1,115 +1,81 @@
 import socket
 import threading
-from caro_game.main import Caro
-from chat_gui import Chat
+import customtkinter
+
+from chat_gui import ChatGUI
+from game_gui import GameGUI
+
+class MainMenu(customtkinter.CTk):
+    def __init__(self):
+        super().__init__()
+        self.geometry("250x180")
+        self.title("Board Game")
+
+        self.label = customtkinter.CTkLabel(master=self, text="Select game:")
+        self.label.pack()
+
+        self.game_menu = customtkinter.CTkOptionMenu(master=self, values=["Caro"], command=None)
+        self.game_menu.pack(padx=10, pady=(5, 15))
+
+        self.start_server = customtkinter.CTkButton(master=self, text='Create Server', command=self.open_start_server_window)
+        self.start_server.pack(padx=10, pady=5)
+
+        self.join_server = customtkinter.CTkButton(master=self, text='Join Server', command=None)
+        self.join_server.pack(padx=10, pady=5)
+
+        self.start_server_window = None
+
+    def open_start_server_window(self):
+        dialog = customtkinter.CTkInputDialog(text="Input username:", title="Create Server")
+        print("Number:", dialog.get_input())
+        chatGUI = ChatGUI('', 55843, dialog.get_input())
+        gameGUI = GameGUI('', 55844)
+        self.destroy()
+        print(socket.gethostbyname(socket.gethostname()))
+        threading.Thread(target=chatGUI.start_server).start()
+        threading.Thread(target=gameGUI.start_server).start()
 
 
-class Client:
-    def __init__(self, host, port, username):
-        self.host = host
-        self.port = port
-        self.username = username
+class StartServer(customtkinter.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("400x300")
 
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect((self.host, self.port))
+        self.label = customtkinter.CTkLabel(master=self, text="Server config")
+        self.label.pack(padx=10, pady=10)
 
-        self.game_gui = Caro(self.sock)
-        self.chat_gui = Chat(self.sock)
+        self.entry = customtkinter.CTkEntry(master=self, placeholder_text="Input username")
+        self.entry.pack(padx=10, pady=(10, 5))
 
-        self.receive_thread = threading.Thread(target=self.receive)
-        self.receive_thread.start()
-
-    def receive(self):
-        while True:
-            try:
-                message = self.sock.recv(1024).decode('utf-8').split('::')
-                if message[0] == 'Game':
-                    x = int(message[1])
-                    y = int(message[2])
-                    self.game_gui.clicked(x, y)
-                elif message[0] == 'Chat':
-                    self.chat_gui.add_message(message[1])
-            except OSError:
-                break
+        self.start_server = customtkinter.CTkButton(master=self, text='Create Server', command=None)
+        self.start_server.pack(padx=10, pady=5)
 
 
-class Server:
-    def __init__(self, host, port, username):
-        self.host = host
-        self.port = port
-        self.username = username
+class StartClient(customtkinter.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("400x300")
 
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.bind((self.host, self.port))
-        self.sock.listen(1)
-
-        self.conn, self.addr = self.sock.accept()
-
-        self.game_gui = Caro(self.conn)
-        self.chat_gui = Chat(self.conn)
-
-        self.receive_thread = threading.Thread(target=self.receive)
-        self.receive_thread.start()
-
-    def receive(self):
-        while True:
-            try:
-                message = self.conn.recv(1024).decode('utf-8').split(',')
-                if message[0] == 'Game':
-                    x = int(message[1])
-                    y = int(message[2])
-                    self.game_gui.clicked(x, y)
-                elif message[0] == 'Chat':
-                    self.chat_gui.add_message(message[1])
-            except OSError:
-                break
-
-    def send(self, message):
-        self.conn.sendall(message.encode('utf-8'))
-
-
-class GUI:
-    def __init__(self, host, port, username):
-        self.host = host
-        self.port = port
-        self.username = username
-
-    def start_client(self):
-        self.client = Client(self.host, self.port, self.username)
-        threading.Thread(target=self.start_client_game).start()
-        threading.Thread(target=self.start_client_chat).start()
-
-    def start_client_game(self):
-        self.client.game_gui.run()
-
-    def start_client_chat(self):
-        self.client.chat_gui.window.mainloop()
-
-    def start_server(self):
-        self.server = Server(self.host, self.port, self.username)
-        threading.Thread(target=self.start_server_game).start()
-        threading.Thread(target=self.start_server_chat).start()
-
-    def start_server_game(self):
-        self.server.game_gui.run()
-
-    def start_server_chat(self):
-        self.server.chat_gui.window.mainloop()
-
+        self.label = customtkinter.CTkLabel(self, text="ToplevelWindow")
+        self.label.pack(padx=20, pady=20)
 
 if __name__ == "__main__":
+    MainMenu().mainloop()
     mode = input("Enter 'server' or 'client' to start: ")
-
     if mode == 'server':
         username = input("Enter username: ")
-        gui = GUI('', 55843, username)
-        print(socket.gethostbyname(socket.gethostname()))
-        gui.start_server()
+        # chatGUI = ChatGUI('', 55843, username)
+        # gameGUI = GameGUI('', 55844)
+        # print(socket.gethostbyname(socket.gethostname()))
+        # threading.Thread(target=chatGUI.start_server).start()
+        # threading.Thread(target=gameGUI.start_server).start()
     elif mode == 'client':
         host = input("Enter server IP address: ")
         port = int(input("Enter server port: "))
         username = input("Enter username: ")
-        gui = GUI(host, port, username)
-        gui.start_client()
+        chatGUI = ChatGUI(host, port, username)
+        gameGUI = GameGUI(host, port + 1)
+        threading.Thread(target=chatGUI.start_client).start()
+        threading.Thread(target=gameGUI.start_client).start()
     else:
         print("Invalid mode. Please enter 'server' or 'client'.")
