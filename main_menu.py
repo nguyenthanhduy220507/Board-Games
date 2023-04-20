@@ -1,4 +1,5 @@
 import socket
+from tkinter import messagebox
 import pygame
 import pygame_menu
 from pygame_menu.examples import create_example_window
@@ -7,7 +8,6 @@ from typing import Optional
 
 from settings import WINDOW_SIZE, ABOUT, FPS, RETURN_MAIN_MENU_STR
 from play_surface import Server, Client
-from chat_gui import GUI
 
 class MainMenu:
     def __init__(self):
@@ -20,17 +20,13 @@ class MainMenu:
 
     def start_click(self):
         username = self.username_server_text.get_value()
-        server = Server('', 55843, username)
-        self.ip_address_server_text = socket.gethostbyname(socket.gethostname())
-        server.gui.run()
-        print(self.ip_address_server_text)
+        Server('', 55843, username, self.surface, self.main_background)
 
     def join_click(self):
         ip_address = self.ip_address_text.get_value()
         if not ip_address: return
         username = self.username_client_text.get_value()
-        client = Client(ip_address, 55843, username)
-        client.gui.run()
+        Client(ip_address, 55843, username)
 
     def run(self):
         self.surface = create_example_window('Example - Game Selector', WINDOW_SIZE)
@@ -42,11 +38,9 @@ class MainMenu:
             width=WINDOW_SIZE[0] * 0.75
         )
 
-        submenu_theme = pygame_menu.themes.THEME_DEFAULT.copy()
-
         self.start_server_menu = pygame_menu.Menu(
             height=WINDOW_SIZE[1] * 0.5,
-            theme=submenu_theme,
+            theme=pygame_menu.themes.THEME_DEFAULT,
             title='Start Server',
             width=WINDOW_SIZE[0] * 0.7
         )
@@ -57,7 +51,7 @@ class MainMenu:
 
         self.join_server_menu = pygame_menu.Menu(
             height=WINDOW_SIZE[1] * 0.5,
-            theme=submenu_theme,
+            theme=pygame_menu.themes.THEME_DEFAULT,
             title='Join Server',
             width=WINDOW_SIZE[0] * 0.7
         )
@@ -95,7 +89,7 @@ class MainMenu:
             width=WINDOW_SIZE[0] * 0.6
         )
 
-        self.main_menu.add.button('Play', self.play_menu)
+        self.main_menu.add.button(title='Play', action=self.play_menu)
         self.main_menu.add.button('About', self.about_menu)
         self.main_menu.add.button('Quit', pygame_menu.events.EXIT)
 

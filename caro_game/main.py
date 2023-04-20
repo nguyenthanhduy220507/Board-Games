@@ -4,8 +4,9 @@ from caro_game.board import Board
 
 
 class Caro:
-    def __init__(self, connection):
+    def __init__(self, connection, username=None):
         self.connection = connection
+        self.username = username
         self.window = pygame.display.set_mode((640, 640))
 
         self.cas = self.window

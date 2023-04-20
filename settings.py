@@ -1,4 +1,3 @@
-# Constants and global variables
 ABOUT = ['Version: 1.00',
          'Author: NianD & Ekanz']
 FPS = 60
