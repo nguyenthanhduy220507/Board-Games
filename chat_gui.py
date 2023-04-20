@@ -1,6 +1,9 @@
 import socket
 import customtkinter as ctk
 from threading import Thread
+import pyautogui
+
+import pygame
 
 class Client:
     def __init__(self, host, port, username):
@@ -59,6 +62,11 @@ class GUI:
 
         self.window = ctk.CTk()
         self.window.title("Chat")
+        screen_width, screen_height = pyautogui.size()
+        print((screen_width, screen_height))
+        # set the dimensions of the window and its position
+        self.window.geometry(f'320x250+{(screen_width + 640)//2}+{(screen_height - 640)//2}')
+        self.window.overrideredirect(True)
 
         self.frame = ctk.CTkFrame(master=self.window)
         self.frame.pack(fill='both')
@@ -78,7 +86,7 @@ class GUI:
         message = self.entry_field.get()
         if not message: return
         self.add_message(f"{self.name}: {message}\n")
-        self.connection.send(f"{self.name}: {message}\n".encode('utf-8'))
+        self.connection.send(f"Chat:::{self.name}: {message}\n".encode('utf-8'))
         self.entry_field.delete(0, 'end')
 
 class ChatGUI:

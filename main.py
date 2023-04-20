@@ -1,29 +1,21 @@
 import socket
 import threading
 
-import customtkinter
-from pygame_menu.examples.game_selector import main
-
-from chat_gui import ChatGUI
-from game_gui import GameGUI
+from play_surface import Server
+from play_surface import Client
 
 if __name__ == "__main__":
-    main()
     mode = input("Enter 'server' or 'client' to start: ")
     if mode == 'server':
         username = input("Enter username: ")
-        chatGUI = ChatGUI('', 55843, username)
-        gameGUI = GameGUI('', 55844)
+        gui = Server('', 55843, username)
         print(socket.gethostbyname(socket.gethostname()))
-        threading.Thread(target=chatGUI.start_server).start()
-        threading.Thread(target=gameGUI.start_server).start()
+        threading.Thread(target=gui.gui.run).start()
     elif mode == 'client':
         host = input("Enter server IP address: ")
         port = int(input("Enter server port: "))
         username = input("Enter username: ")
-        chatGUI = ChatGUI(host, port, username)
-        gameGUI = GameGUI(host, port + 1)
-        threading.Thread(target=chatGUI.start_client).start()
-        threading.Thread(target=gameGUI.start_client).start()
+        gui = Client(host, port, username)
+        threading.Thread(target=gui.gui.run).start()
     else:
         print("Invalid mode. Please enter 'server' or 'client'.")
