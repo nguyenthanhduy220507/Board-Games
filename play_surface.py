@@ -1,3 +1,5 @@
+import functools
+import queue
 import socket
 import sys
 import threading
@@ -17,9 +19,11 @@ class Client:
         self.sock.connect((self.host, self.port))
 
         self.gui = PlaySurface(self.sock)
+        self.message_queue = queue.Queue()
 
-        self.receive_thread = threading.Thread(target=self.receive)
+        self.receive_thread = threading.Thread(target=self.receive, daemon=True)
         self.receive_thread.start()
+        self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
 
     def receive(self):
         while True:
@@ -30,9 +34,17 @@ class Client:
                     y = int(message[2])
                     self.gui.game_gui_window.mouse_click(x, y)
                 elif message[0] == 'Chat':
-                    self.gui.chat_gui_window.add_message(str(message[1]))
+                    self.message_queue.put(message[1])
             except OSError:
                 break
+
+    def update_chat_gui(self):
+        try:
+            message = self.message_queue.get_nowait()
+            self.gui.chat_gui_window.add_message(str(message))
+        except queue.Empty:
+            pass
+        self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
 
 class Server:
     def __init__(self, host, port, username):
@@ -47,10 +59,12 @@ class Server:
         self.conn, self.addr = self.sock.accept()
 
         self.gui = PlaySurface(self.conn)
+        self.message_queue = queue.Queue()
 
-        self.receive_thread = threading.Thread(target=self.receive)
+        self.receive_thread = threading.Thread(target=self.receive, daemon=True)
         self.receive_thread.start()
-
+        self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
+        
     def receive(self):
         while True:
             try:
@@ -60,9 +74,17 @@ class Server:
                     y = int(message[2])
                     self.gui.game_gui_window.mouse_click(x, y)
                 elif message[0] == 'Chat':
-                    self.gui.chat_gui_window.add_message(str(message[1]))
+                    self.message_queue.put(message[1])
             except OSError:
                 break
+
+    def update_chat_gui(self):
+        try:
+            message = self.message_queue.get_nowait()
+            self.gui.chat_gui_window.add_message(str(message))
+        except queue.Empty:
+            pass
+        self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
 
     def send(self, message):
         self.conn.sendall(message.encode('utf-8'))
