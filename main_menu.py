@@ -111,7 +111,4 @@ class MainMenu:
             if self.main_menu.is_enabled():
                 self.main_menu.mainloop(self.surface, self.main_background, fps_limit=FPS)
 
-            pygame.display.mainloop()
-
-if __name__ == '__main__':
-    MainMenu().run()
+            pygame.display.update()

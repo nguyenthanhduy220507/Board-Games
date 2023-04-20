@@ -1,59 +1,5 @@
-import socket
 import customtkinter as ctk
-from threading import Thread
 import pyautogui
-
-import pygame
-
-class Client:
-    def __init__(self, host, port, username):
-        self.host = host
-        self.port = port
-        self.username = username
-
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect((self.host, self.port))
-
-        self.gui = GUI(self.sock, self.username)
-
-        self.receive_thread = Thread(target=self.receive)
-        self.receive_thread.start()
-
-    def receive(self):
-        while True:
-            try:
-                message = self.sock.recv(1024).decode('utf-8')
-                self.gui.add_message(message)
-            except OSError:
-                break
-
-class Server:
-    def __init__(self, host, port, username):
-        self.host = host
-        self.port = port
-        self.username = username
-
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.bind((self.host, self.port))
-        self.sock.listen(1)
-
-        self.conn, self.addr = self.sock.accept()
-
-        self.gui = GUI(self.conn, self.username)
-
-        self.receive_thread = Thread(target=self.receive)
-        self.receive_thread.start()
-
-    def receive(self):
-        while True:
-            try:
-                message = self.conn.recv(1024).decode('utf-8')
-                self.gui.add_message(message)
-            except OSError:
-                break
-
-    def send(self, message):
-        self.conn.sendall(message.encode('utf-8'))
 
 class GUI:
     def __init__(self, connection, name = 'Player'):
@@ -66,7 +12,6 @@ class GUI:
         print((screen_width, screen_height))
         # set the dimensions of the window and its position
         self.window.geometry(f'320x250+{(screen_width + 640)//2}+{(screen_height - 640)//2}')
-        self.window.overrideredirect(True)
 
         self.frame = ctk.CTkFrame(master=self.window)
         self.frame.pack(fill='both')
@@ -79,8 +24,9 @@ class GUI:
 
     def add_message(self, message):
         self.message_list.configure(state='normal')
-        self.message_list.insert(self.message_list.index('end'), message)
+        self.message_list.insert('end', message)
         self.message_list.configure(state='disabled')
+        self.message_list.see('end')
 
     def send_message(self, event=None):
         message = self.entry_field.get()
@@ -89,16 +35,5 @@ class GUI:
         self.connection.send(f"Chat:::{self.name}: {message}\n".encode('utf-8'))
         self.entry_field.delete(0, 'end')
 
-class ChatGUI:
-    def __init__(self, host, port, username):
-        self.host = host
-        self.port = port
-        self.username = username
-
-    def start_client(self):
-        client = Client(self.host, self.port, self.username)
-        client.gui.window.mainloop()
-
-    def start_server(self):
-        server = Server(self.host, self.port, self.username)
-        server.gui.window.mainloop()
+if __name__ == '__main__':
+    GUI(None).window.mainloop()

@@ -30,7 +30,7 @@ class Client:
                     y = int(message[2])
                     self.gui.game_gui_window.mouse_click(x, y)
                 elif message[0] == 'Chat':
-                    self.gui.chat_gui_window.add_message(message[1])
+                    self.gui.chat_gui_window.add_message(str(message[1]))
             except OSError:
                 break
 
@@ -60,7 +60,7 @@ class Server:
                     y = int(message[2])
                     self.gui.game_gui_window.mouse_click(x, y)
                 elif message[0] == 'Chat':
-                    self.gui.chat_gui_window.add_message(message[1])
+                    self.gui.chat_gui_window.add_message(str(message[1]))
             except OSError:
                 break
 
