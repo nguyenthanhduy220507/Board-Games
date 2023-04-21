@@ -17,6 +17,8 @@ class Client:
         self.port = port
         self.username = username
 
+        self.connected = True
+
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((self.host, self.port))
 
@@ -27,7 +29,7 @@ class Client:
         threading.Thread(target=self.receive, daemon=True).start()
         self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
         self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
-        self.gui.run()
+        self.gui.run(self.connected)
 
     def receive(self):
         while True:
@@ -41,6 +43,7 @@ class Client:
                     self.message_queue.put(message[1])
             except OSError:
                 print(str(OSError))
+                self.connected = False
                 self.sock.close()
                 self.close_queue.put('Close Connection')
                 break
@@ -48,7 +51,7 @@ class Client:
     def close_chat_gui(self):
         try:
             self.close_queue.get_nowait()
-            self.gui.run(False)
+            self.gui.run(self.connected)
         except queue.Empty:
             pass
         self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
@@ -103,7 +106,7 @@ class Server:
         threading.Thread(target=self.receive, daemon=True).start()
         self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
         self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
-        self.gui.run()
+        self.gui.run(self.connected)
 
     def accepted_connect(self):
         try:
@@ -124,6 +127,7 @@ class Server:
                     self.message_queue.put(message[1])
             except OSError:
                 print(str(OSError))
+                self.connected = False
                 self.conn.close()
                 self.close_queue.put('Close connection')
                 break
@@ -131,7 +135,7 @@ class Server:
     def close_chat_gui(self):
         try:
             self.close_queue.get_nowait()
-            self.gui.run(False)
+            self.gui.run(self.connected)
         except queue.Empty:
             pass
         self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
