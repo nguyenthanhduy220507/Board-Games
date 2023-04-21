@@ -1,25 +1,26 @@
 import pygame
-from pygame.locals import MOUSEBUTTONDOWN, QUIT
-from caro_game.board import Board
+from setting import *
+from pygame.image import load
+from editor import Editor
 
+class Main:
+    def __init__(self):
+        pygame.init()
+        self.display_surface = pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEIGHT))
+        self.clock = pygame.time.Clock()
+        self.editor = Editor()
+        #cursor
+        surf = load('img/watermelon_cursor.png').convert_alpha()
+        cursor = pygame.cursors.Cursor((0, 0),surf)
+        pygame.mouse.set_cursor(cursor)
 
-class Caro:
-    def __init__(self, connection, username=None):
-        self.connection = connection
-        self.username = username
-        self.window = pygame.display.set_mode((640, 640))
+    def run(self):
+        while True:
+            dt = self.clock.tick() / 1000
+            
+            self.editor.run(dt)
+            pygame.display.update()
 
-        self.cas = self.window
-        self.board = Board()
-        self.board.vehinh(self.cas)
-        self.board.condition = 1
-
-    def mouse_click(self, x, y):
-        self.board.click_flag_box(self.cas, x, y)
-
-    def mouse_event(self, event):
-        if event.type == MOUSEBUTTONDOWN:
-            x, y = event.pos
-            self.mouse_click(x, y)
-            self.connection.send(f'Game:::{x}:::{y}'.encode('utf-8'))
-
+if __name__ == '__main__':
+    main = Main()
+    main.run()
