@@ -49,6 +49,7 @@ class Client:
     def close_chat_gui(self):
         try:
             self.close_queue.get_nowait()
+            self.gui.chat_gui_window.window.destroy()
             self.gui.close(self.main_menu)
         except queue.Empty:
             pass
@@ -129,6 +130,7 @@ class Server:
     def close_chat_gui(self):
         try:
             self.close_queue.get_nowait()
+            self.gui.chat_gui_window.window.destroy()
             self.gui.close(self.main_menu)
         except queue.Empty:
             pass
@@ -165,5 +167,4 @@ class PlaySurface:
             self.chat_gui_window.window.update()
     
     def close(self, main_menu):
-        self.chat_gui_window.window.destroy()
         main_menu()
