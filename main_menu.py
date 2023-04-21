@@ -19,14 +19,14 @@ class MainMenu:
     def start_click(self):
         username = self.username_server_text.get_value()
         if not username: return
-        Server('', 55843, username, self.surface, self.run)
+        Server('', 55843, username, self.surface)
 
     def join_click(self):
         ip_address = self.ip_address_text.get_value()
         if not ip_address: return
         username = self.username_client_text.get_value()
         if not username: return
-        Client(ip_address, 55843, username, self.run)
+        Client(ip_address, 55843, username)
 
     def run(self):
         self.surface = create_example_window('Example - Game Selector', WINDOW_SIZE)
@@ -60,7 +60,6 @@ class MainMenu:
         self.join_server_menu.add.button('Join', self.join_click)
         self.join_server_menu.add.button(RETURN_MAIN_MENU_STR, pygame_menu.events.RESET)
 
-        # pygame.font.Font(pygame_menu.font.FONT_FRANCHISE, 30)
         self.play_menu.add.button('Start server', self.start_server_menu)
         self.play_menu.add.button('Join server', self.join_server_menu)
         self.play_menu.add.button(RETURN_MAIN_MENU_STR, pygame_menu.events.BACK)

@@ -12,12 +12,10 @@ from settings import WINDOW_SIZE
 
 
 class Client:
-    def __init__(self, host, port, username, main_menu):
+    def __init__(self, host, port, username):
         self.host = host
         self.port = port
         self.username = username
-        self.main_menu = main_menu
-        self.after_ids = []
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((self.host, self.port))
@@ -26,12 +24,9 @@ class Client:
         self.message_queue = queue.Queue()
         self.close_queue = queue.Queue()
 
-        self.receive_thread = threading.Thread(
-            target=self.receive, daemon=True)
-        self.receive_thread.start()
+        threading.Thread(target=self.receive, daemon=True).start()
         self.after_ids.append(self.gui.chat_gui_window.window.after(100, self.update_chat_gui))
-        self.after_ids.append(self.gui.chat_gui_window.window.after(100, self.close_chat_gui))
-        self.gui.run(main_menu)
+        self.gui.run()
 
     def receive(self):
         while True:
@@ -46,17 +41,8 @@ class Client:
             except OSError:
                 print(str(OSError))
                 self.sock.close()
-                self.close_queue.put('Close Connection')
+                self.gui.close()
                 break
-
-    def close_chat_gui(self):
-        try:
-            self.close_queue.get_nowait()
-            self.gui.chat_gui_window.window.quit()
-            self.gui.close(self.main_menu, self.after_ids)
-        except queue.Empty:
-            pass
-        self.after_ids.append(self.gui.chat_gui_window.window.after(100, self.close_chat_gui))
 
     def update_chat_gui(self):
         try:
@@ -64,16 +50,14 @@ class Client:
             self.gui.chat_gui_window.add_message(str(message))
         except queue.Empty:
             pass
-        self.after_ids.append(self.gui.chat_gui_window.window.after(100, self.update_chat_gui))
+        self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
 
 
 class Server:
-    def __init__(self, host, port, username, surface, main_menu):
+    def __init__(self, host, port, username, surface):
         self.host = host
         self.port = port
         self.username = username
-        self.main_menu = main_menu
-        self.after_ids = []
 
         self.connected = False
 
@@ -106,11 +90,9 @@ class Server:
         loading.disable()
         self.gui = PlaySurface(self.conn, username)
         self.message_queue = queue.Queue()
-        self.close_queue = queue.Queue()
         threading.Thread(target=self.receive, daemon=True).start()
-        self.after_ids.append(self.gui.chat_gui_window.window.after(100, self.update_chat_gui))
-        self.after_ids.append(self.gui.chat_gui_window.window.after(100, self.close_chat_gui))
-        self.gui.run(main_menu)
+        self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
+        self.gui.run()
 
     def accepted_connect(self):
         try:
@@ -132,17 +114,8 @@ class Server:
             except OSError:
                 print(str(OSError))
                 self.conn.close()
-                self.close_queue.put('Close connection')
+                self.gui.close()
                 break
-
-    def close_chat_gui(self):
-        try:
-            self.close_queue.get_nowait()
-            self.gui.chat_gui_window.window.quit()
-            self.gui.close(self.main_menu, self.after_ids)
-        except queue.Empty:
-            pass
-        self.after_ids.append(self.gui.chat_gui_window.window.after(100, self.close_chat_gui))
 
     def update_chat_gui(self):
         try:
@@ -150,7 +123,7 @@ class Server:
             self.gui.chat_gui_window.add_message(str(message))
         except queue.Empty:
             pass
-        self.after_ids.append(self.gui.chat_gui_window.window.after(100, self.update_chat_gui))
+        self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
 
     def send(self, message):
         self.conn.sendall(message.encode('utf-8'))
@@ -162,19 +135,17 @@ class PlaySurface:
         self.chat_gui_window = GUI(connection, username)
         self.game_gui_window = Caro(connection, username)
 
-    def run(self, main_menu):
+    def run(self):
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                    self.chat_gui_window.on_closing()
-                    self.connection.close()
-                    main_menu()
-                    return
+                    pygame.quit()
+                    sys.exit()
                 self.game_gui_window.mouse_event(event)
 
             pygame.display.update()
             self.chat_gui_window.window.update()
 
-    def close(self, main_menu, after_ids):
-        self.chat_gui_window.on_closing(after_ids)
-        main_menu()
+    def close(self):
+        pygame.quit()
+        sys.exit()
