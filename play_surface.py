@@ -25,7 +25,7 @@ class Client:
         self.close_queue = queue.Queue()
 
         threading.Thread(target=self.receive, daemon=True).start()
-        self.after_ids.append(self.gui.chat_gui_window.window.after(100, self.update_chat_gui))
+        self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
         self.gui.run()
 
     def receive(self):
@@ -39,7 +39,6 @@ class Client:
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError:
-                print(str(OSError))
                 self.sock.close()
                 self.gui.close()
                 break
@@ -112,7 +111,6 @@ class Server:
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError:
-                print(str(OSError))
                 self.conn.close()
                 self.gui.close()
                 break
