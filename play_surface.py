@@ -52,7 +52,6 @@ class Client:
     def close_chat_gui(self):
         try:
             self.close_queue.get_nowait()
-            self.gui.chat_gui_window.window.quit()
             self.gui.close(self.main_menu, self.after_ids)
         except queue.Empty:
             pass
@@ -138,7 +137,6 @@ class Server:
     def close_chat_gui(self):
         try:
             self.close_queue.get_nowait()
-            self.gui.chat_gui_window.window.quit()
             self.gui.close(self.main_menu, self.after_ids)
         except queue.Empty:
             pass
@@ -166,10 +164,8 @@ class PlaySurface:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                    self.chat_gui_window.on_closing()
                     self.connection.close()
                     main_menu()
-                    return
                 self.game_gui_window.mouse_event(event)
 
             pygame.display.update()
