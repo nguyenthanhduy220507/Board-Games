@@ -162,7 +162,7 @@ class PlaySurface:
                     pygame.quit()
                     sys.exit()
                 self.game_gui_window.editor.event_loop(event)
-                self.game_gui_window.mouse_event(event)
+                self.game_gui_window.mouse_event()
 
             self.game_gui_window.clock.tick(10)
             self.game_gui_window.editor.run()
