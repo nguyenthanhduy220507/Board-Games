@@ -18,7 +18,6 @@ class Client:
         self.main_menu = main_menu
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.connect((self.host, self.port))
 
         self.gui = PlaySurface(self.sock, username)
