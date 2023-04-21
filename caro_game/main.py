@@ -17,7 +17,11 @@ class Caro:
         cursor = pygame.cursors.Cursor((0, 0),surf)
         pygame.mouse.set_cursor(cursor)
 
+    def mouse_click(self, x, y):
+        self.editor.left_mouse_click(x, y)
+
     def mouse_event(self, event):
         if mouse_button()[0] and event.type == pygame.MOUSEBUTTONDOWN:
             (x, y) = self.editor.get_current_cell()
+            self.editor.left_mouse_click(x, y)
             self.connection.send(f'Game:::{x}:::{y}'.encode('utf-8'))
