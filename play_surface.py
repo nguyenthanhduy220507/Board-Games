@@ -48,7 +48,7 @@ class Client:
     def close_chat_gui(self):
         try:
             self.close_queue.get_nowait()
-            self.gui.close()
+            self.gui.run(False)
         except queue.Empty:
             pass
         self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
@@ -131,7 +131,7 @@ class Server:
     def close_chat_gui(self):
         try:
             self.close_queue.get_nowait()
-            self.gui.close()
+            self.gui.run(False)
         except queue.Empty:
             pass
         self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
@@ -154,10 +154,10 @@ class PlaySurface:
         self.chat_gui_window = GUI(connection, username)
         self.game_gui_window = Caro(connection, username)
 
-    def run(self):
+    def run(self, connected=True):
         while True:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                if event.type == pygame.QUIT or not connected or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     self.connection.close()
                     pygame.quit()
                     sys.exit()
@@ -165,9 +165,3 @@ class PlaySurface:
 
             pygame.display.update()
             self.chat_gui_window.window.update()
-
-    def close(self):
-        try:
-            pygame.quit()
-            sys.exit()
-        except Exception: pass
