@@ -39,6 +39,8 @@ class Client:
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError:
+                self.sock.close()
+                self.gui.close()
                 break
 
     def update_chat_gui(self):
@@ -106,6 +108,8 @@ class Server:
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError:
+                self.conn.close()
+                self.gui.close()
                 break
 
     def update_chat_gui(self):
@@ -136,3 +140,7 @@ class PlaySurface:
 
             pygame.display.update()
             self.chat_gui_window.window.update()
+    
+    def close(self, main_menu):
+        self.chat_gui_window.window.destroy()
+        main_menu()
