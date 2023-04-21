@@ -156,7 +156,6 @@ class PlaySurface:
 
     def run(self):
         while True:
-            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     self.connection.close()
@@ -165,7 +164,7 @@ class PlaySurface:
                 self.game_gui_window.editor.event_loop(event)
                 self.game_gui_window.mouse_event(event)
 
-            self.game_gui_window.editor.run(None)
+            self.game_gui_window.editor.run()
             pygame.display.update()
             self.chat_gui_window.window.update()
 
