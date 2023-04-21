@@ -39,8 +39,9 @@ class Client:
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError:
+                print(str(OSError))
                 self.sock.close()
-                self.gui.close()
+                self.gui.close(self.main_menu)
                 break
 
     def update_chat_gui(self):
@@ -108,8 +109,9 @@ class Server:
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError:
+                print(str(OSError))
                 self.conn.close()
-                self.gui.close()
+                self.gui.close(self.main_menu)
                 break
 
     def update_chat_gui(self):
