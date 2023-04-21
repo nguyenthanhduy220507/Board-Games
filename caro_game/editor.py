@@ -36,8 +36,6 @@ class Editor():
 
     def event_loop(self, event):
         self.pan_input(event)
-        if self.playing:
-            self.canvas_add(event)
 
     def pan_input(self, event):
         #kéo chuột phải
@@ -89,11 +87,6 @@ class Editor():
             if self.check_win((x, y)):
                 self.playing = False
                 self.alert_winning((x, y))
-
-    def canvas_add(self, event):
-        if mouse_button()[0] and event.type == pygame.locals.MOUSEBUTTONDOWN:
-            (x, y) = self.get_current_cell()
-            self.left_mouse_click(x, y)
 
     def draw(self):
         for pos, item in self.canvas_data.items():
