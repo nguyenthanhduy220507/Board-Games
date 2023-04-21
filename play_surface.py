@@ -28,6 +28,7 @@ class Client:
         self.receive_thread.start()
         self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
         self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
+        self.gui.chat_gui_window.window.after_cancel()
         self.gui.run(main_menu)
 
     def receive(self):
@@ -104,6 +105,7 @@ class Server:
         threading.Thread(target=self.receive, daemon=True).start()
         self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
         self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
+        self.gui.chat_gui_window.window.after_cancel()
         self.gui.run(main_menu)
 
     def accepted_connect(self):
