@@ -20,7 +20,6 @@ class MainMenu:
         username = self.username_server_text.get_value()
         if not username: return
         Server('', 55843, username, self.surface, self.run)
-        self.main_menu.close()
 
     def join_click(self):
         ip_address = self.ip_address_text.get_value()
@@ -28,7 +27,6 @@ class MainMenu:
         username = self.username_client_text.get_value()
         if not username: return
         Client(ip_address, 55843, username, self.run)
-        self.main_menu.close()
 
     def run(self):
         self.surface = create_example_window('Example - Game Selector', WINDOW_SIZE)
