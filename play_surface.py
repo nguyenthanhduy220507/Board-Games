@@ -10,6 +10,8 @@ from chat_gui import GUI
 from caro_game.main import Caro
 from settings import WINDOW_SIZE
 
+from main_menu import MainMenu
+
 
 class Client:
     def __init__(self, host, port, username, main_menu):
@@ -165,7 +167,8 @@ class PlaySurface:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     self.connection.close()
-                    main_menu()
+                    pygame.quit()
+                    MainMenu().run()
                 self.game_gui_window.mouse_event(event)
 
             pygame.display.update()
