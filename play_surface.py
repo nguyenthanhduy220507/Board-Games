@@ -150,6 +150,7 @@ class Server:
 
 class PlaySurface:
     def __init__(self, connection, username):
+        pygame.init()
         self.connection = connection
         self.chat_gui_window = GUI(connection, username)
         self.game_gui_window = Caro(connection, username)
