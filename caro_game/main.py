@@ -19,7 +19,7 @@ class Caro:
 
     def mouse_event(self):
         if self.editor.playing and mouse_button()[0]:
-                (x, y) = self.editor.get_current_cell()
-                self.editor.left_mouse_click(x, y)
-                print((x, y))
-                self.connection.send(f'Game:::{x}:::{y}'.encode('utf-8'))
+            (x, y) = self.editor.get_current_cell()
+            self.editor.left_mouse_click(x, y)
+            print((x, y))
+            self.connection.send(f'Game:::{x}:::{y}'.encode('utf-8'))
