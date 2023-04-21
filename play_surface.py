@@ -166,5 +166,4 @@ class PlaySurface:
             self.chat_gui_window.window.update()
 
     def close(self):
-        pygame.quit()
         sys.exit()
