@@ -1,9 +1,7 @@
-import functools
 import queue
 import socket
 import sys
 import threading
-from tkinter import messagebox
 
 import pygame
 import pygame_menu
@@ -13,10 +11,11 @@ from caro_game.main import Caro
 from settings import WINDOW_SIZE
 
 class Client:
-    def __init__(self, host, port, username):
+    def __init__(self, host, port, username, main_menu):
         self.host = host
         self.port = port
         self.username = username
+        self.main_menu = main_menu
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((self.host, self.port))
@@ -27,7 +26,18 @@ class Client:
         self.receive_thread = threading.Thread(target=self.receive, daemon=True)
         self.receive_thread.start()
         self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
-        self.gui.run()
+        self.gui.run(main_menu)
+
+    def is_socket_closed(self, sock):
+        try:
+            # Kiểm tra giá trị của các tham số SOL_SOCKET và SO_ERROR
+            # Nếu cả hai đều trả về giá trị 0 thì kết nối đã bị đóng
+            sock.getsockopt(socket.SOL_SOCKET, socket.SO_ERROR)
+            return False
+        except socket.error:
+            # Nếu phát sinh socket.error, thì socket đã bị đóng
+            self.gui.run(self.main_menu, False)
+            return True
 
     def receive(self):
         while True:
@@ -40,6 +50,8 @@ class Client:
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError:
+                if self.is_socket_closed(self.sock):
+                    break
                 break
 
     def update_chat_gui(self):
@@ -51,10 +63,11 @@ class Client:
         self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
 
 class Server:
-    def __init__(self, host, port, username, surface, main_background):
+    def __init__(self, host, port, username, surface, main_menu):
         self.host = host
         self.port = port
         self.username = username
+        self.main_menu = main_menu
 
         self.connected = False
 
@@ -68,6 +81,7 @@ class Server:
             width=WINDOW_SIZE[0] * 0.7
         )
         loading.add.label(title=f'IP Address:{socket.gethostbyname(socket.gethostname())}')
+        self.connected_clients = 0
         threading.Thread(target=self.accepted_connect).start()
         while True:
             events = pygame.event.get()
@@ -88,13 +102,15 @@ class Server:
         self.receive_thread = threading.Thread(target=self.receive, daemon=True)
         self.receive_thread.start()
         self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
-        self.gui.run()
+        self.gui.run(main_menu)
 
     def accepted_connect(self):
         try:
             self.conn, self.addr = self.sock.accept()
         except Exception: pass
-        self.connected = True
+        else:
+            self.connected_clients += 1
+            self.connected = True
         
     def receive(self):
         while True:
@@ -107,6 +123,12 @@ class Server:
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError:
+                pass
+            else:
+                self.connected_clients -= 1
+                if self.connected_clients == 0:
+                    self.conn.close()
+                    self.gui.run(self.main_menu, False)
                 break
 
     def update_chat_gui(self):
@@ -126,12 +148,13 @@ class PlaySurface:
         self.chat_gui_window = GUI(connection, username)
         self.game_gui_window = Caro(connection, username)
 
-    def run(self):
+    def run(self, main_menu, connected=True):
         while True:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                if event.type == pygame.QUIT or not connected or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                    self.chat_gui_window.window.destroy()
+                    main_menu()
+                    return
                 self.game_gui_window.mouse_event(event)
 
             pygame.display.update()

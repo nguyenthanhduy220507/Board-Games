@@ -1,5 +1,3 @@
-import socket
-from tkinter import messagebox
 import pygame
 import pygame_menu
 from pygame_menu.examples import create_example_window
@@ -20,13 +18,13 @@ class MainMenu:
 
     def start_click(self):
         username = self.username_server_text.get_value()
-        Server('', 55843, username, self.surface, self.main_background)
+        Server('', 55843, username, self.surface, self.run)
 
     def join_click(self):
         ip_address = self.ip_address_text.get_value()
         if not ip_address: return
         username = self.username_client_text.get_value()
-        Client(ip_address, 55843, username)
+        Client(ip_address, 55843, username, self.run)
 
     def run(self):
         self.surface = create_example_window('Example - Game Selector', WINDOW_SIZE)
