@@ -1,26 +1,23 @@
 import pygame
-from setting import *
+from caro_game.setting import WINDOW_HEIGHT, WINDOW_WIDTH
 from pygame.image import load
-from editor import Editor
+from pygame.mouse import get_pressed as mouse_button
+from caro_game.editor import Editor
 
-class Main:
-    def __init__(self):
-        pygame.init()
-        self.display_surface = pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEIGHT))
+class Caro:
+    def __init__(self, connection, username=None):
+        self.connection = connection
+        self.username = username
+
+        self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.clock = pygame.time.Clock()
         self.editor = Editor()
         #cursor
-        surf = load('img/watermelon_cursor.png').convert_alpha()
+        surf = load('./img/watermelon_cursor.png').convert_alpha()
         cursor = pygame.cursors.Cursor((0, 0),surf)
         pygame.mouse.set_cursor(cursor)
 
-    def run(self):
-        while True:
-            dt = self.clock.tick() / 1000
-            
-            self.editor.run(dt)
-            pygame.display.update()
-
-if __name__ == '__main__':
-    main = Main()
-    main.run()
+    def mouse_event(self, event):
+        if mouse_button()[0] and event.type == pygame.MOUSEBUTTONDOWN:
+            (x, y) = self.editor.get_current_cell()
+            self.connection.send(f'Game:::{x}:::{y}'.encode('utf-8'))

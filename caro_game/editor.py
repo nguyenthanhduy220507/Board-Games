@@ -1,10 +1,8 @@
 import pygame
-import sys
-from setting import *
+from caro_game.setting import WINDOW_HEIGHT, WINDOW_WIDTH, TILE_SIZE, EDITOR_DATA, LINE_COLOR
 from pygame.math import Vector2 as vector
 from pygame.mouse import get_pressed as mouse_button
 from pygame.mouse import get_pos as mouse_pos
-from pygame.image import load
 
 
 class Editor():
@@ -13,7 +11,6 @@ class Editor():
         self.origin = vector()
         self.pain_active = False
         self.pain_offset = vector()
-        self.current_player = cross_player
         # support line
         self.support_line_surf = pygame.Surface((WINDOW_WIDTH,WINDOW_HEIGHT))
         self.canvas_data = {}
@@ -37,14 +34,10 @@ class Editor():
 
         return col, row
 
-    def event_loop(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            self.pan_input(event)
-            if self.playing:
-                self.canvas_add(event)
+    def event_loop(self, event):
+        self.pan_input(event)
+        if self.playing:
+            self.canvas_add(event)
 
     def pan_input(self, event):
         #kéo chuột phải
@@ -85,20 +78,22 @@ class Editor():
 
         self.display_surface.blit(self.support_line_surf,(0,0))
 
+    def left_mouse_click(self, x, y):
+        if (x, y) != self.last_selected_cell:
+            if (x, y) not in self.canvas_data:
+                self.canvas_data[(x, y)] = CanvasTile(self.selection_index)
+            else:
+                return
+            self.last_selected_cell = (x, y)
+            self.selection_index = self.canvas_data[(x, y)].get_not_cell()
+            if self.check_win((x, y)):
+                self.playing = False
+                self.alert_winning((x, y))
+
     def canvas_add(self, event):
         if mouse_button()[0] and event.type == pygame.MOUSEBUTTONDOWN:
-            current_cell = self.get_current_cell()
-            if current_cell != self.last_selected_cell:
-                if current_cell not in self.canvas_data:
-                    self.canvas_data[current_cell] = CanvasTile(self.selection_index)
-                else:
-                    return
-                self.last_selected_cell = current_cell
-                self.selection_index = self.canvas_data[current_cell].get_not_cell()
-                if self.check_win(current_cell):
-                    self.playing = False
-                    self.alert_winning(current_cell)
-                
+            (x, y) = self.get_current_cell()
+            self.left_mouse_click(x, y)
 
     def draw(self):
         for pos, item in self.canvas_data.items():
@@ -259,14 +254,14 @@ class Editor():
             return True
         return False
     def alert_winning(self, current_cell):
-        str = ''
+        _str = ''
         if self.canvas_data[current_cell].get_cell() == 'x':
-            str = 'Player X wins!'
+            _str = 'Player X wins!'
         else:
-            str = 'Player O wins!'
+            _str = 'Player O wins!'
         
         font = pygame.font.Font(None, 36)
-        text = font.render(str, 1, (0, 0, 0))
+        text = font.render(_str, 1, (0, 0, 0))
         text_rect = text.get_rect(center=(WINDOW_WIDTH/2, WINDOW_HEIGHT/2))
 
         # Draw border around text
@@ -276,57 +271,7 @@ class Editor():
         # Draw text
         self.display_surface.blit(text, text_rect)
 
-
-    
-    # def get_cell_index(self, pos):
-    #     # tính toán vị trí của ô trên ma trận
-    #     x = int((pos.x - self.origin.x) // TILE_SIZE)
-    #     y = int((pos.y - self.origin.y) // TILE_SIZE)
-    #     # tính toán chỉ số của hàng và cột tương ứng với ô được chọn
-    #     row = y
-    #     col = x
-    #     return row, col
-
-    # vẽ bằng pygame
-    # def draw_shape(self, pos):
-        if self.current_player == cross_player:  # hình X
-            x = int((pos.x - self.origin.x) // TILE_SIZE) * \
-                TILE_SIZE + self.origin.x
-            y = int((pos.y - self.origin.y) // TILE_SIZE) * \
-                TILE_SIZE + self.origin.y
-            pygame.draw.line(self.display_surface, 'red', (x, y),
-                             (x + TILE_SIZE, y + TILE_SIZE), 2)
-            pygame.draw.line(self.display_surface, 'red',
-                             (x + TILE_SIZE, y), (x, y + TILE_SIZE), 2)
-            print("4")
-        elif self.current_player == circle_player:  # hình O
-            x = int((pos.x - self.origin.x) // TILE_SIZE) * \
-                TILE_SIZE + self.origin.x + TILE_SIZE // 2
-            y = int((pos.y - self.origin.y) // TILE_SIZE) * \
-                TILE_SIZE + self.origin.y + TILE_SIZE // 2
-            radius = TILE_SIZE // 2 - 2
-            pygame.draw.circle(self.display_surface, 'cyan', (x, y), radius, 2)
-            print("3")
-
-    # def on_mouse_button_down(self):
-        # tính toán vị trí của ô trên ma trận
-        pos = vector(pygame.mouse.get_pos())
-
-        cell_index = self.get_cell_index(pos)
-        row, col = cell_index
-        print("Selected cell:", row, col)
-        if self.current_player == cross_player:
-            self.current_player = circle_player
-
-            print("2")
-        elif self.current_player == circle_player:
-            self.current_player = cross_player
-        self.draw_shape(pos)
-        print("1")
-
-    def run(self, dt):
-        self.event_loop()
-        # self.display_surface.fill("white")
+    def run(self):
         if self.flag_playing:
             self.draw_board()
             self.draw()
