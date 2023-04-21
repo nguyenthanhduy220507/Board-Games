@@ -26,9 +26,10 @@ class Client:
 
         self.receive_thread = threading.Thread(target=self.receive, daemon=True)
         self.receive_thread.start()
-        self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
-        self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
-        self.gui.chat_gui_window.window.after_cancel()
+        update_id = self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
+        self.gui.chat_gui_window.window.after_cancel(update_id)
+        close_id = self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
+        self.gui.chat_gui_window.window.after_cancel(close_id)
         self.gui.run(main_menu)
 
     def receive(self):
@@ -103,9 +104,10 @@ class Server:
         self.message_queue = queue.Queue()
         self.close_queue = queue.Queue()
         threading.Thread(target=self.receive, daemon=True).start()
-        self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
-        self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
-        self.gui.chat_gui_window.window.after_cancel()
+        update_id = self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
+        self.gui.chat_gui_window.window.after_cancel(update_id)
+        close_id = self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
+        self.gui.chat_gui_window.window.after_cancel(close_id)
         self.gui.run(main_menu)
 
     def accepted_connect(self):
