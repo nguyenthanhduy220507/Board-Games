@@ -156,6 +156,7 @@ class PlaySurface:
 
     def run(self):
         while True:
+            dt = self.game_gui_window.clock.tick() / 1000
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     self.connection.close()
