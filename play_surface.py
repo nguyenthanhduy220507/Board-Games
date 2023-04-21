@@ -22,10 +22,12 @@ class Client:
 
         self.gui = PlaySurface(self.sock, username)
         self.message_queue = queue.Queue()
+        self.close_queue = queue.Queue()
 
         self.receive_thread = threading.Thread(target=self.receive, daemon=True)
         self.receive_thread.start()
         self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
+        self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
         self.gui.run(main_menu)
 
     def receive(self):
@@ -41,8 +43,16 @@ class Client:
             except Exception:
                 print(str(Exception))
                 self.sock.close()
-                self.gui.close(self.main_menu)
+                self.close_queue.put('Close Connection')
                 break
+
+    def close_chat_gui(self):
+        try:
+            self.close_queue.get_nowait()
+            self.gui.close(self.main_menu)
+        except queue.Empty:
+            pass
+        self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
 
     def update_chat_gui(self):
         try:
@@ -88,8 +98,10 @@ class Server:
         loading.disable()
         self.gui = PlaySurface(self.conn, username)
         self.message_queue = queue.Queue()
+        self.close_queue = queue.Queue()
         threading.Thread(target=self.receive, daemon=True).start()
         self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
+        self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
         self.gui.run(main_menu)
 
     def accepted_connect(self):
@@ -111,8 +123,16 @@ class Server:
             except Exception:
                 print(str(Exception))
                 self.conn.close()
-                self.gui.close(self.main_menu)
+                self.close_queue.put('Close connection')
                 break
+
+    def close_chat_gui(self):
+        try:
+            self.close_queue.get_nowait()
+            self.gui.close(self.main_menu)
+        except queue.Empty:
+            pass
+        self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
 
     def update_chat_gui(self):
         try:
