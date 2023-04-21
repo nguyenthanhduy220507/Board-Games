@@ -17,8 +17,6 @@ class Client:
         self.port = port
         self.username = username
 
-        self.connected = True
-
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((self.host, self.port))
 
@@ -29,7 +27,7 @@ class Client:
         threading.Thread(target=self.receive, daemon=True).start()
         self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
         self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
-        self.gui.run(self.connected)
+        self.gui.run()
 
     def receive(self):
         while True:
@@ -43,7 +41,6 @@ class Client:
                     self.message_queue.put(message[1])
             except OSError:
                 print(str(OSError))
-                self.connected = False
                 self.sock.close()
                 self.close_queue.put('Close Connection')
                 break
@@ -51,7 +48,7 @@ class Client:
     def close_chat_gui(self):
         try:
             self.close_queue.get_nowait()
-            self.gui.run(self.connected)
+            self.gui.close()
         except queue.Empty:
             pass
         self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
@@ -90,7 +87,7 @@ class Server:
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:
-                    self.sock.close()
+                    self.conn.close()
                     pygame.quit()
                     sys.exit()
             if self.connected:
@@ -127,7 +124,6 @@ class Server:
                     self.message_queue.put(message[1])
             except OSError:
                 print(str(OSError))
-                self.connected = False
                 self.conn.close()
                 self.close_queue.put('Close connection')
                 break
@@ -135,7 +131,7 @@ class Server:
     def close_chat_gui(self):
         try:
             self.close_queue.get_nowait()
-            self.gui.run(self.connected)
+            self.gui.close()
         except queue.Empty:
             pass
         self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
@@ -154,15 +150,14 @@ class Server:
 
 class PlaySurface:
     def __init__(self, connection, username):
-        pygame.init()
         self.connection = connection
         self.chat_gui_window = GUI(connection, username)
         self.game_gui_window = Caro(connection, username)
 
-    def run(self, connected=True):
+    def run(self):
         while True:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT or not connected or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     self.connection.close()
                     pygame.quit()
                     sys.exit()
@@ -170,3 +165,8 @@ class PlaySurface:
 
             pygame.display.update()
             self.chat_gui_window.window.update()
+
+    def close(self):
+        self.connection.close()
+        pygame.quit()
+        sys.exit()
