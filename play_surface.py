@@ -103,7 +103,7 @@ class Server:
         threading.Thread(target=self.receive, daemon=True).start()
         self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
         self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
-        self.gui.run(self.connected)
+        self.gui.run()
 
     def accepted_connect(self):
         try:
