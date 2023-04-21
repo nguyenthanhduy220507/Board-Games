@@ -9,7 +9,6 @@ class GUI:
         self.window = ctk.CTk()
         self.window.title("Chat")
         screen_width, screen_height = pyautogui.size()
-        print((screen_width, screen_height))
         # set the dimensions of the window and its position
         self.window.geometry(f'320x250+{(screen_width + 640)//2}+{(screen_height - 640)//2}')
         self.window.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -27,7 +26,8 @@ class GUI:
         if after_ids is not None:
             for id in after_ids:
                 self.window.after_cancel(id)
-        self.window.destroy()
+        if self.window.winfo_exists():
+            self.window.destroy()
 
     def add_message(self, message):
         self.message_list.configure(state='normal')

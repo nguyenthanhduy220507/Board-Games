@@ -166,7 +166,7 @@ class PlaySurface:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                    self.chat_gui_window.window.withdraw()
+                    self.chat_gui_window.on_closing()
                     self.connection.close()
                     main_menu()
                     return
@@ -176,5 +176,5 @@ class PlaySurface:
             self.chat_gui_window.window.update()
 
     def close(self, main_menu, after_ids):
-        self.chat_gui_window.window.withdraw()
+        self.chat_gui_window.on_closing(after_ids)
         main_menu()
