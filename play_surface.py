@@ -26,6 +26,7 @@ class Client:
 
         threading.Thread(target=self.receive, daemon=True).start()
         self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
+        self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
         self.gui.run()
 
     def receive(self):
@@ -39,9 +40,18 @@ class Client:
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError:
+                print(str(OSError))
                 self.sock.close()
-                self.gui.close()
+                self.close_queue.put('Close Connection')
                 break
+
+    def close_chat_gui(self):
+        try:
+            self.close_queue.get_nowait()
+            self.gui.close()
+        except queue.Empty:
+            pass
+        self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
 
     def update_chat_gui(self):
         try:
@@ -89,8 +99,10 @@ class Server:
         loading.disable()
         self.gui = PlaySurface(self.conn, username)
         self.message_queue = queue.Queue()
+        self.close_queue = queue.Queue()
         threading.Thread(target=self.receive, daemon=True).start()
         self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
+        self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
         self.gui.run()
 
     def accepted_connect(self):
@@ -111,9 +123,18 @@ class Server:
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError:
+                print(str(OSError))
                 self.conn.close()
-                self.gui.close()
+                self.close_queue.put('Close connection')
                 break
+
+    def close_chat_gui(self):
+        try:
+            self.close_queue.get_nowait()
+            self.gui.close()
+        except queue.Empty:
+            pass
+        self.gui.chat_gui_window.window.after(100, self.close_chat_gui)
 
     def update_chat_gui(self):
         try:
