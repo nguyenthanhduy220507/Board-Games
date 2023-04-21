@@ -39,8 +39,8 @@ class Client:
                     self.gui.game_gui_window.mouse_click(x, y)
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
-            except OSError:
-                print(str(OSError))
+            except OSError as e:
+                print(str(e))
                 self.sock.close()
                 self.close_queue.put('Close Connection')
                 break
@@ -122,8 +122,8 @@ class Server:
                     self.gui.game_gui_window.mouse_click(x, y)
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
-            except OSError:
-                print(str(OSError))
+            except OSError as e:
+                print(str(e))
                 self.conn.close()
                 self.close_queue.put('Close connection')
                 break

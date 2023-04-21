@@ -41,7 +41,7 @@ class Editor():
 
     def pan_input(self, event):
         #kéo chuột phải
-        if event.type == pygame.MOUSEBUTTONDOWN and mouse_button()[2]:
+        if event.type == pygame.locals.MOUSEBUTTONDOWN and mouse_button()[2]:
             self.pain_active = True
             self.pain_offset = vector(mouse_pos()) - self.origin
 
@@ -91,7 +91,7 @@ class Editor():
                 self.alert_winning((x, y))
 
     def canvas_add(self, event):
-        if mouse_button()[0] and event.type == pygame.MOUSEBUTTONDOWN:
+        if mouse_button()[0] and event.type == pygame.locals.MOUSEBUTTONDOWN:
             (x, y) = self.get_current_cell()
             self.left_mouse_click(x, y)
 
@@ -107,8 +107,6 @@ class Editor():
             if item.has_x:
                 image = pygame.image.load(EDITOR_DATA[0]['image'])
                 self.display_surface.blit(image, current_pos)
-
-
             if item.has_o:
                 image = pygame.image.load(EDITOR_DATA[1]['image'])
                 self.display_surface.blit(image, current_pos)
