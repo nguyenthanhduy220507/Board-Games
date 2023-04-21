@@ -158,8 +158,8 @@ class PlaySurface:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     self.chat_gui_window.window.destroy()
-                    main_menu()
                     self.connection.close()
+                    main_menu()
                     return
                 self.game_gui_window.mouse_event(event)
 
