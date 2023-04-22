@@ -165,7 +165,7 @@ class PlaySurface:
                 self.game_gui_window.editor.event_loop(event)
                 self.game_gui_window.mouse_event()
 
-            self.game_gui_window.clock.tick(60)
+            self.game_gui_window.clock.tick(30)
             
             self.game_gui_window.editor.run()
             pygame.display.update()
