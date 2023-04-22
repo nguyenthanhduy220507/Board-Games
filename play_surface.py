@@ -42,9 +42,9 @@ class Client:
                     self.message_queue.put(message[1])
             except OSError as e:
                 print(str(e))
-                self.sock.close()
-                self.close_queue.put('Close connection')
-                break
+                # self.sock.close()
+                # self.close_queue.put('Close connection')
+                # break
 
     def close_chat_gui(self):
         try:
@@ -130,9 +130,9 @@ class Server:
                     self.message_queue.put(message[1])
             except OSError as e:
                 print(str(e))
-                self.sock.close()
-                self.close_queue.put('Close connection')
-                break
+                # self.sock.close()
+                # self.close_queue.put('Close connection')
+                # break
 
     def close_chat_gui(self):
         try:
