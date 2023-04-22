@@ -38,6 +38,7 @@ class Client:
                     x = int(message[1])
                     y = int(message[2])
                     self.gui.game_gui_window.editor.left_mouse_click(x, y)
+                    time.sleep(1)
                     self.gui.game_gui_window.clicked = False
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
@@ -126,6 +127,7 @@ class Server:
                     x = int(message[1])
                     y = int(message[2])
                     self.gui.game_gui_window.editor.left_mouse_click(x, y)
+                    time.sleep(1)
                     self.gui.game_gui_window.clicked = False
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
