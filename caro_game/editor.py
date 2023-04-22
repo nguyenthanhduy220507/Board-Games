@@ -118,108 +118,109 @@ class Editor():
 
     # theo hàng dọc
     def check_winning_vertical(self, current_cell):
-        if current_cell not in self.canvas_data:
-            return False
+        if current_cell not in self.canvas_data: return False
         current_index = self.canvas_data[current_cell].get_cell()
         # print(current_index)
         check_flag = 1
 
         # Check top
-        neighbor_row = current_cell[1] - 1
-        new_cell = (current_cell[0], neighbor_row)
-        while neighbor_row >= current_cell[1] - 4 and check_flag != 5:
+        neighbor_row_start = current_cell[1] - 1
+        new_cell = (current_cell[0],neighbor_row_start)
+        while neighbor_row_start >= current_cell[1] - 4 and check_flag != 5:
             if not self.check_neighbors_cell(new_cell, current_index):
                 break
-            neighbor_row -= 1
+            neighbor_row_start -= 1
             check_flag += 1
-            new_cell = (current_cell[0], neighbor_row)
+            new_cell = (current_cell[0],neighbor_row_start)
 
-        # check right
-        neighbor_row = current_cell[1] + 1
-        new_cell = (current_cell[0], neighbor_row)
-        while neighbor_row <= current_cell[1] + 4 and check_flag != 5:
+        #check right
+        neighbor_row_end = current_cell[1] + 1
+        new_cell = (current_cell[0],neighbor_row_end)
+        while neighbor_row_end <= current_cell[1] + 4 and check_flag != 5:
             if not self.check_neighbors_cell(new_cell, current_index):
                 break
-            neighbor_row += 1
+            neighbor_row_end += 1
             check_flag += 1
-            new_cell = (current_cell[0], neighbor_row)
+            new_cell = (current_cell[0],neighbor_row_end)
 
         if check_flag == 5:
+            self.draw_player_winning_vertical(neighbor_row_start,neighbor_row_end -1)
             return True
         return False
-    # check theo hàng ngàng
-
+    
+    #check theo hàng ngàng
     def check_winning_horizontal(self, current_cell):
-        if current_cell not in self.canvas_data:
-            return False
+        if current_cell not in self.canvas_data: return False
         current_index = self.canvas_data[current_cell].get_cell()
         # print(current_index)
         check_flag = 1
 
         # Check left
-        neighbor_col = current_cell[0] - 1
-        new_cell = (neighbor_col, current_cell[1])
-        while neighbor_col >= current_cell[0] - 4 and check_flag != 5:
+        neighbor_col_start = current_cell[0] - 1
+        new_cell = (neighbor_col_start, current_cell[1])
+        while neighbor_col_start >= current_cell[0] - 4 and check_flag != 5:
             if not self.check_neighbors_cell(new_cell, current_index):
                 break
-            neighbor_col -= 1
+            neighbor_col_start -= 1
             check_flag += 1
-            new_cell = (neighbor_col, current_cell[1])
+            new_cell = (neighbor_col_start, current_cell[1])
 
-        # check right
-        neighbor_col = current_cell[0] + 1
-        new_cell = (neighbor_col, current_cell[1])
-        while neighbor_col <= current_cell[0] + 4 and check_flag != 5:
+        #check right
+        neighbor_col_end = current_cell[0] + 1
+        new_cell = (neighbor_col_end, current_cell[1])
+        while neighbor_col_end <= current_cell[0] + 4 and check_flag != 5:
             if not self.check_neighbors_cell(new_cell, current_index):
                 break
-            neighbor_col += 1
+            neighbor_col_end += 1
             check_flag += 1
-            new_cell = (neighbor_col, current_cell[1])
+            new_cell = (neighbor_col_end, current_cell[1])
 
         if check_flag == 5:
+            self.draw_player_winning_horizontal(neighbor_col_start,neighbor_col_end -1)
             return True
         return False
-    # đường chéo chính
 
+    #đường chéo chính
     def check_winning_main_diagonal(self, current_cell):
-        if current_cell not in self.canvas_data:
-            return False
+        if current_cell not in self.canvas_data: return False
         current_index = self.canvas_data[current_cell].get_cell()
         # print(current_index)
         check_flag = 1
-
         # Check top left
         neighbor_col = current_cell[0] - 1
         neighbor_row = current_cell[1] - 1
         new_cell = (neighbor_col, neighbor_row)
-        while neighbor_col >= current_cell[0] - 4 and check_flag != 5:
-            if not self.check_neighbors_cell(new_cell, current_index):
+        while neighbor_col >= current_cell[0] - 4:
+            if check_flag == 5 or not self.check_neighbors_cell(new_cell, current_index):
                 break
             neighbor_col -= 1
             neighbor_row -= 1
             check_flag += 1
             new_cell = (neighbor_col, neighbor_row)
 
-        # check down right
+        new_cell_start = new_cell
+        #check down right
         neighbor_col = current_cell[0] + 1
         neighbor_row = current_cell[1] + 1
         new_cell = (neighbor_col, neighbor_row)
-        while neighbor_col <= current_cell[0] + 4 and check_flag != 5:
-            if not self.check_neighbors_cell(new_cell, current_index):
+        while neighbor_col <= current_cell[0] + 4:
+            if check_flag == 5 or not self.check_neighbors_cell(new_cell, current_index):
                 break
             neighbor_col += 1
             neighbor_row += 1
             check_flag += 1
             new_cell = (neighbor_col, neighbor_row)
+        new_cell_end = new_cell
 
         if check_flag == 5:
+            print(f'Start: {new_cell_start}, End: {new_cell_end} ')
+            self.draw_player_winning_main_draw_player_winning_auxiliary_diagonal_diagonal(new_cell_start, new_cell_end - vector(1, 1))
             return True
         return False
-    # đường chéo phụ
-
+    
+    #đường chéo phụ
     def check_winning_auxiliary_diagonal(self, current_cell):
-        if current_cell not in self.canvas_data:
-            return False
+        if current_cell not in self.canvas_data: return False
         current_index = self.canvas_data[current_cell].get_cell()
         # print(current_index)
         check_flag = 1
@@ -228,29 +229,49 @@ class Editor():
         neighbor_col = current_cell[0] - 1
         neighbor_row = current_cell[1] + 1
         new_cell = (neighbor_col, neighbor_row)
-        while neighbor_col >= current_cell[0] - 4 and check_flag != 5:
-            if not self.check_neighbors_cell(new_cell, current_index):
+        while neighbor_col >= current_cell[0] - 4:
+            if check_flag == 5 or not self.check_neighbors_cell(new_cell, current_index):
                 break
             neighbor_col -= 1
             neighbor_row += 1
             check_flag += 1
             new_cell = (neighbor_col, neighbor_row)
-
-        # check down right
+        new_cell_start = new_cell
+        #check down right
         neighbor_col = current_cell[0] + 1
         neighbor_row = current_cell[1] - 1
         new_cell = (neighbor_col, neighbor_row)
-        while neighbor_col <= current_cell[0] + 4 and check_flag != 5:
-            if not self.check_neighbors_cell(new_cell, current_index):
+        while neighbor_col <= current_cell[0] + 4:
+            if check_flag == 5 or not self.check_neighbors_cell(new_cell, current_index):
                 break
             neighbor_col += 1
             neighbor_row -= 1
             check_flag += 1
             new_cell = (neighbor_col, neighbor_row)
-
+        new_cell_end = new_cell
         if check_flag == 5:
+            print(f'Start: {new_cell_start}, End: {new_cell_end} ')
+            self.draw_player_winning_main_draw_player_winning_auxiliary_diagonal_diagonal(new_cell_start - vector(0, 1), new_cell_end - vector(1, 0))
             return True
         return False
+
+    #vẽ hàng ngang
+    def draw_player_winning_horizontal(self, start_point, end_point):
+        start_pos = self.origin + vector(start_point, self.last_selected_cell[1]) * TILE_SIZE + vector(TILE_SIZE, TILE_SIZE/2)
+        end_pos = self.origin + vector(end_point, self.last_selected_cell[1]) * TILE_SIZE + vector(TILE_SIZE, TILE_SIZE/2)
+        pygame.draw.line(self.display_surface, (255, 0, 0), start_pos, end_pos, 3)
+    
+    #vẽ hàng dọc
+    def draw_player_winning_vertical(self, start_point, end_point):
+        start_pos = self.origin + vector(self.last_selected_cell[0], start_point) * TILE_SIZE + vector(TILE_SIZE/2, TILE_SIZE)
+        end_pos = self.origin + vector(self.last_selected_cell[0], end_point) * TILE_SIZE + vector(TILE_SIZE/2, TILE_SIZE)
+        pygame.draw.line(self.display_surface, (255, 0, 0), start_pos, end_pos, 3)
+    
+    # vẽ đường chéo chính , đường chéo phụ
+    def draw_player_winning_main_draw_player_winning_auxiliary_diagonal_diagonal(self, start_point, end_point):
+        start_pos = self.origin + vector(start_point[0], start_point[1]) * TILE_SIZE + vector(TILE_SIZE, TILE_SIZE)
+        end_pos = self.origin + vector(end_point[0], end_point[1]) * TILE_SIZE + vector(TILE_SIZE, TILE_SIZE)
+        pygame.draw.line(self.display_surface, (255, 0, 0), start_pos, end_pos, 3)
 
     def check_win(self, current_cell):
         if self.check_winning_horizontal(current_cell) or self.check_winning_vertical(current_cell) or self.check_winning_main_diagonal(current_cell) or self.check_winning_auxiliary_diagonal(current_cell):
@@ -261,17 +282,17 @@ class Editor():
     def alert_winning(self, current_cell):
         _str = ''
         if self.canvas_data[current_cell].get_cell() == 'x':
-            _str = 'Player X wins!'
+            _str = 'Player X wins! Enter to Play again .'
         else:
-            _str = 'Player O wins!'
+            _str = 'Player O wins! Enter to Play again .'
 
         font = pygame.font.Font(None, 36)
-        text = font.render(_str, 1, (0, 0, 0))
+        text = font.render(_str, 1, (255,255, 255))
         text_rect = text.get_rect(center=(WINDOW_WIDTH/2, WINDOW_HEIGHT/2))
 
         # Draw border around text
         border_rect = text_rect.inflate(10, 10)
-        pygame.draw.rect(self.display_surface, (255, 0, 0), border_rect)
+        pygame.draw.rect(self.display_surface, (0, 0, 0, 0.5), border_rect)
 
         # Draw text
         self.display_surface.blit(text, text_rect)
