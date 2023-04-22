@@ -40,6 +40,7 @@ class Client:
                     x = int(message[1])
                     y = int(message[2])
                     clickQueue.put(f'Clicked:::{x}:::{y}')
+                    self.game_gui_window.clicked = False
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError as e:
@@ -128,6 +129,7 @@ class Server:
                     x = int(message[1])
                     y = int(message[2])
                     clickQueue.put(f'Clicked:::{x}:::{y}')
+                    self.game_gui_window.clicked = False
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError as e:
@@ -172,7 +174,6 @@ class PlaySurface:
             if not clickQueue.empty():
                 message = str(clickQueue.get()).split(":::")
                 self.game_gui_window.editor.left_mouse_click(int(message[1]), int(message[2]))
-                self.game_gui_window.clicked = False
             
             self.game_gui_window.clock.tick(30)
             
