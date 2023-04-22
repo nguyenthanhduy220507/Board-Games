@@ -108,7 +108,7 @@ class Server:
         while True:
             try:
                 data, addr = self.sock.recvfrom(1024)
-                if data == 'Connected':
+                if data == b'Connected':
                     self.connected = True
                     break
                 else:
