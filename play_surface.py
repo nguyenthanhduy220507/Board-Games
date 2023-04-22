@@ -32,7 +32,8 @@ class Client:
     def receive(self):
         while True:
             try:
-                message, _ = self.sock.recvfrom(1024).decode('utf-8').split(':::')
+                data, address = self.sock.recvfrom(1024)
+                message = data.decode('utf-8').split(':::')
                 if message[0] == 'Game':
                     x = int(message[1])
                     y = int(message[2])
@@ -86,7 +87,6 @@ class Server:
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:
-                    self.conn.close()
                     pygame.quit()
                     sys.exit()
             if self.connected:
@@ -114,12 +114,13 @@ class Server:
                 else:
                     self.connected = False
             except Exception:
-                pass
+                break
 
     def receive(self):
         while True:
             try:
-                message, _ = self.sock.recvfrom(1024).decode('utf-8').split(':::')
+                data, address = self.sock.recvfrom(1024)
+                message = data.decode('utf-8').split(':::')
                 if message[0] == 'Game':
                     x = int(message[1])
                     y = int(message[2])
@@ -128,7 +129,7 @@ class Server:
                     self.message_queue.put(message[1])
             except OSError as e:
                 print(str(e))
-                self.conn.close()
+                self.sock.close()
                 self.close_queue.put('Close connection')
                 break
 
