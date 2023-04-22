@@ -2,6 +2,7 @@ import queue
 import socket
 import sys
 import threading
+import time
 
 import pygame
 import pygame_menu
@@ -164,7 +165,8 @@ class PlaySurface:
                 self.game_gui_window.editor.event_loop(event)
                 self.game_gui_window.mouse_event()
 
-            self.game_gui_window.clock.tick(15)
+            self.game_gui_window.clock.tick(60)
+            
             self.game_gui_window.editor.run()
             pygame.display.update()
             self.chat_gui_window.window.update()
