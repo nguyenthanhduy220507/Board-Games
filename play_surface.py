@@ -32,7 +32,7 @@ class Client:
     def receive(self):
         while True:
             try:
-                data, address = self.sock.recvfrom(1024)
+                data, addr = self.sock.recvfrom(1024)
                 message = data.decode('utf-8').split(':::')
                 if message[0] == 'Game':
                     x = int(message[1])
@@ -96,7 +96,7 @@ class Server:
                 loading.draw(surface)
             pygame.display.update()
         loading.disable()
-        self.gui = PlaySurface(self.sock, self.host, self.port, username)
+        self.gui = PlaySurface(self.sock, self.addr[0], self.addr[1], username)
         self.message_queue = queue.Queue()
         self.close_queue = queue.Queue()
         threading.Thread(target=self.receive, daemon=True).start()
@@ -107,7 +107,7 @@ class Server:
     def accepted_connect(self):
         while True:
             try:
-                data, addr = self.sock.recvfrom(1024)
+                data, self.addr = self.sock.recvfrom(1024)
                 if data == b'Connected':
                     self.connected = True
                     break
@@ -119,7 +119,7 @@ class Server:
     def receive(self):
         while True:
             try:
-                data, address = self.sock.recvfrom(1024)
+                data, addr = self.sock.recvfrom(1024)
                 message = data.decode('utf-8').split(':::')
                 if message[0] == 'Game':
                     x = int(message[1])
