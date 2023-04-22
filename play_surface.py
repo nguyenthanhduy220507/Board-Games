@@ -19,7 +19,7 @@ class Client:
         self.username = username
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.sendto('Connected', (self.host, self.port))
+        self.sock.sendto(b'Connected', (self.host, self.port))
         self.gui = PlaySurface(self.sock, self.host, self.port, username)
         self.message_queue = queue.Queue()
         self.close_queue = queue.Queue()
