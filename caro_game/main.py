@@ -24,6 +24,5 @@ class Caro:
         if self.editor.playing and mouse_button()[0] and not self.clicked:
             (x, y) = self.editor.get_current_cell()
             self.editor.left_mouse_click(x, y)
-            print((x, y))
             self.connection.sendto(f'Game:::{x}:::{y}:::'.encode('utf-8'), (self.host, self.port))
             self.clicked = True
