@@ -37,7 +37,9 @@ class Client:
                 if message[0] == 'Game':
                     x = int(message[1])
                     y = int(message[2])
+                    self.gui.game_gui_window.clicked = False
                     self.gui.game_gui_window.editor.left_mouse_click(x, y)
+                    self.gui.game_gui_window.clicked = True
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError as e:
@@ -124,7 +126,9 @@ class Server:
                 if message[0] == 'Game':
                     x = int(message[1])
                     y = int(message[2])
+                    self.gui.game_gui_window.clicked = False
                     self.gui.game_gui_window.editor.left_mouse_click(x, y)
+                    self.gui.game_gui_window.clicked = True
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError as e:

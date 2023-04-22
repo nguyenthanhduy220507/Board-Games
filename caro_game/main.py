@@ -18,9 +18,10 @@ class Caro:
         surf = load('./img/watermelon_cursor.png').convert_alpha()
         cursor = pygame.cursors.Cursor((0, 0),surf)
         pygame.mouse.set_cursor(cursor)
+        self.clicked = False
 
     def mouse_event(self):
-        if self.editor.playing and mouse_button()[0]:
+        if self.editor.playing and mouse_button()[0] and not self.clicked:
             (x, y) = self.editor.get_current_cell()
             self.editor.left_mouse_click(x, y)
             print((x, y))
