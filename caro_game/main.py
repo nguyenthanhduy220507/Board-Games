@@ -13,7 +13,7 @@ class Caro:
 
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.clock = pygame.time.Clock()
-        self.editor = Editor()
+        self.editor = Editor(username)
         #cursor
         surf = load('./img/watermelon_cursor.png').convert_alpha()
         cursor = pygame.cursors.Cursor((0, 0),surf)

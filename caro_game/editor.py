@@ -6,7 +6,9 @@ from pygame.mouse import get_pos as mouse_pos
 
 
 class Editor():
-    def __init__(self):
+    def __init__(self, username):
+        self.username = username
+
         self.display_surface = pygame.display.get_surface()
         self.origin = vector()
         self.pain_active = False
@@ -282,9 +284,9 @@ class Editor():
     def alert_winning(self, current_cell):
         _str = ''
         if self.canvas_data[current_cell].get_cell() == 'x':
-            _str = 'Player X wins! Enter to Play again .'
+            _str = f'Player {self.username} wins! Enter to Play again .'
         else:
-            _str = 'Player O wins! Enter to Play again .'
+            _str = f'Player {self.username} wins! Enter to Play again .'
 
         font = pygame.font.Font(None, 36)
         text = font.render(_str, 1, (255,255, 255))
