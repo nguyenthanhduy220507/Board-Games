@@ -2,8 +2,10 @@ import customtkinter as ctk
 import pyautogui
 
 class GUI:
-    def __init__(self, connection, name = 'Player'):
+    def __init__(self, connection, host, port, name = 'Player'):
         self.connection = connection
+        self.host = host
+        self.port = port
         self.name = name
 
         self.window = ctk.CTk()
@@ -31,5 +33,5 @@ class GUI:
         message = self.entry_field.get()
         if not message: return
         self.add_message(f"{self.name}: {message}\n")
-        self.connection.send(f"Chat:::{self.name}: {message}\n".encode('utf-8'))
+        self.connection.sendto(f"Chat:::{self.name}: {message}\n".encode('utf-8'), (self.host, self.port))
         self.entry_field.delete(0, 'end')

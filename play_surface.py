@@ -18,10 +18,9 @@ class Client:
         self.port = port
         self.username = username
 
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect((self.host, self.port))
-
-        self.gui = PlaySurface(self.sock, username)
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.sendto('Connected', (self.host, self.port))
+        self.gui = PlaySurface(self.sock, self.host, self.port, username)
         self.message_queue = queue.Queue()
         self.close_queue = queue.Queue()
 
@@ -33,7 +32,7 @@ class Client:
     def receive(self):
         while True:
             try:
-                message = self.sock.recv(1024).decode('utf-8').split(':::')
+                message, _ = self.sock.recvfrom(1024).decode('utf-8').split(':::')
                 if message[0] == 'Game':
                     x = int(message[1])
                     y = int(message[2])
@@ -71,10 +70,9 @@ class Server:
 
         self.connected = False
 
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.bind((self.host, self.port))
-        self.sock.listen(1)
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # self.sock.bind((self.host, self.port))
 
         loading = pygame_menu.Menu(
             height=WINDOW_SIZE[1] * 0.5,
@@ -98,7 +96,7 @@ class Server:
                 loading.draw(surface)
             pygame.display.update()
         loading.disable()
-        self.gui = PlaySurface(self.conn, username)
+        self.gui = PlaySurface(self.sock, self.host, self.port, username)
         self.message_queue = queue.Queue()
         self.close_queue = queue.Queue()
         threading.Thread(target=self.receive, daemon=True).start()
@@ -107,16 +105,21 @@ class Server:
         self.gui.run()
 
     def accepted_connect(self):
-        try:
-            self.conn, self.addr = self.sock.accept()
-        except Exception:
-            pass
-        self.connected = True
+        while True:
+            try:
+                data, addr = self.sock.recvfrom(1024)
+                if data == 'Connected':
+                    self.connected = True
+                    break
+                else:
+                    self.connected = False
+            except Exception:
+                pass
 
     def receive(self):
         while True:
             try:
-                message = self.conn.recv(1024).decode('utf-8').split(':::')
+                message, _ = self.sock.recvfrom(1024).decode('utf-8').split(':::')
                 if message[0] == 'Game':
                     x = int(message[1])
                     y = int(message[2])
@@ -145,15 +148,12 @@ class Server:
             pass
         self.gui.chat_gui_window.window.after(100, self.update_chat_gui)
 
-    def send(self, message):
-        self.conn.sendall(message.encode('utf-8'))
-
 
 class PlaySurface:
-    def __init__(self, connection, username):
+    def __init__(self, connection, host, port, username):
         self.connection = connection
-        self.chat_gui_window = GUI(connection, username)
-        self.game_gui_window = Caro(connection, username)
+        self.chat_gui_window = GUI(connection, host, port, username)
+        self.game_gui_window = Caro(connection, host, port, username)
 
     def run(self):
         while True:
