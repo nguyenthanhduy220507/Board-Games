@@ -33,6 +33,7 @@ class Client:
             try:
                 data, addr = self.sock.recvfrom(1024)
                 message = data.decode('utf-8').split(':::')
+                print(message)
                 if message[0] == 'Game':
                     x = int(message[1])
                     y = int(message[2])
@@ -121,6 +122,7 @@ class Server:
             try:
                 data, addr = self.sock.recvfrom(1024)
                 message = data.decode('utf-8').split(':::')
+                print(message)
                 if message[0] == 'Game':
                     x = int(message[1])
                     y = int(message[2])
