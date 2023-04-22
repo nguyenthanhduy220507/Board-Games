@@ -81,12 +81,14 @@ class Editor():
             if (x, y) not in self.canvas_data:
                 self.canvas_data[(x, y)] = CanvasTile(self.selection_index)
             else:
-                return
+                return False
             self.last_selected_cell = (x, y)
             self.selection_index = self.canvas_data[(x, y)].get_not_cell()
             if self.check_win((x, y)):
                 self.playing = False
                 self.alert_winning((x, y))
+            return True
+        return False
 
     def draw(self):
         for pos, item in self.canvas_data.items():

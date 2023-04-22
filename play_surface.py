@@ -171,8 +171,8 @@ class PlaySurface:
 
             if not clickQueue.empty():
                 message = str(clickQueue.get()).split(":::")
-                self.game_gui_window.editor.left_mouse_click(int(message[1]), int(message[2]))
-                self.game_gui_window.clicked = False
+                if self.game_gui_window.editor.left_mouse_click(int(message[1]), int(message[2])):
+                    self.game_gui_window.clicked = False
             
             self.game_gui_window.clock.tick(30)
             
