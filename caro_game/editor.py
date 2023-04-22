@@ -12,7 +12,7 @@ class Editor():
         self.pain_active = False
         self.pain_offset = vector()
         # support line
-        self.support_line_surf = pygame.Surface((WINDOW_WIDTH,WINDOW_HEIGHT))
+        self.support_line_surf = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.canvas_data = {}
         self.last_selected_cell = None
         self.selection_index = 'x'
@@ -38,7 +38,7 @@ class Editor():
         self.pan_input(event)
 
     def pan_input(self, event):
-        #kéo chuột phải
+        # kéo chuột phải
         if event.type == pygame.locals.MOUSEBUTTONDOWN and mouse_button()[2]:
             self.pain_active = True
             self.pain_offset = vector(mouse_pos()) - self.origin
@@ -74,7 +74,7 @@ class Editor():
             pygame.draw.line(self.support_line_surf, LINE_COLOR,
                              (0, y), (WINDOW_WIDTH, y))
 
-        self.display_surface.blit(self.support_line_surf,(0,0))
+        self.display_surface.blit(self.support_line_surf, (0, 0))
 
     def left_mouse_click(self, x, y):
         if (x, y) != self.last_selected_cell:
@@ -87,16 +87,20 @@ class Editor():
             if self.check_win((x, y)):
                 self.playing = False
                 self.alert_winning((x, y))
+        self.draw()
 
     def draw(self):
         for pos, item in self.canvas_data.items():
             if pos == self.last_selected_cell:
                 border_color = (255, 0, 0)
                 surface = pygame.Surface((TILE_SIZE, TILE_SIZE))
-                surface.fill((255,255,255))
-                pygame.draw.rect(surface, border_color, (0, 0, TILE_SIZE,TILE_SIZE), 2)
-                self.display_surface.blit(surface, self.origin + vector(pos) * TILE_SIZE)
-            current_pos = self.origin + vector(pos) * TILE_SIZE + vector(TILE_SIZE/8, TILE_SIZE/8)
+                surface.fill((255, 255, 255))
+                pygame.draw.rect(surface, border_color,
+                                 (0, 0, TILE_SIZE, TILE_SIZE), 2)
+                self.display_surface.blit(
+                    surface, self.origin + vector(pos) * TILE_SIZE)
+            current_pos = self.origin + \
+                vector(pos) * TILE_SIZE + vector(TILE_SIZE/8, TILE_SIZE/8)
             if item.has_x:
                 image = pygame.image.load(EDITOR_DATA[0]['image'])
                 self.display_surface.blit(image, current_pos)
@@ -104,46 +108,49 @@ class Editor():
                 image = pygame.image.load(EDITOR_DATA[1]['image'])
                 self.display_surface.blit(image, current_pos)
 
-    def check_neighbors_cell(self,new_cell, current_index):
+    def check_neighbors_cell(self, new_cell, current_index):
         if new_cell not in self.canvas_data:
             return False
         if self.canvas_data[new_cell].get_cell() != current_index:
             return False
         return True
-    
+
     # theo hàng dọc
     def check_winning_vertical(self, current_cell):
-        if current_cell not in self.canvas_data: return False
+        if current_cell not in self.canvas_data:
+            return False
         current_index = self.canvas_data[current_cell].get_cell()
         # print(current_index)
         check_flag = 1
 
         # Check top
         neighbor_row = current_cell[1] - 1
-        new_cell = (current_cell[0],neighbor_row)
+        new_cell = (current_cell[0], neighbor_row)
         while neighbor_row >= current_cell[1] - 4 and check_flag != 5:
             if not self.check_neighbors_cell(new_cell, current_index):
                 break
             neighbor_row -= 1
             check_flag += 1
-            new_cell = (current_cell[0],neighbor_row)
+            new_cell = (current_cell[0], neighbor_row)
 
-        #check right
+        # check right
         neighbor_row = current_cell[1] + 1
-        new_cell = (current_cell[0],neighbor_row)
+        new_cell = (current_cell[0], neighbor_row)
         while neighbor_row <= current_cell[1] + 4 and check_flag != 5:
             if not self.check_neighbors_cell(new_cell, current_index):
                 break
             neighbor_row += 1
             check_flag += 1
-            new_cell = (current_cell[0],neighbor_row)
+            new_cell = (current_cell[0], neighbor_row)
 
         if check_flag == 5:
             return True
         return False
-    #check theo hàng ngàng
+    # check theo hàng ngàng
+
     def check_winning_horizontal(self, current_cell):
-        if current_cell not in self.canvas_data: return False
+        if current_cell not in self.canvas_data:
+            return False
         current_index = self.canvas_data[current_cell].get_cell()
         # print(current_index)
         check_flag = 1
@@ -158,7 +165,7 @@ class Editor():
             check_flag += 1
             new_cell = (neighbor_col, current_cell[1])
 
-        #check right
+        # check right
         neighbor_col = current_cell[0] + 1
         new_cell = (neighbor_col, current_cell[1])
         while neighbor_col <= current_cell[0] + 4 and check_flag != 5:
@@ -171,9 +178,11 @@ class Editor():
         if check_flag == 5:
             return True
         return False
-    #đường chéo chính
+    # đường chéo chính
+
     def check_winning_main_diagonal(self, current_cell):
-        if current_cell not in self.canvas_data: return False
+        if current_cell not in self.canvas_data:
+            return False
         current_index = self.canvas_data[current_cell].get_cell()
         # print(current_index)
         check_flag = 1
@@ -190,7 +199,7 @@ class Editor():
             check_flag += 1
             new_cell = (neighbor_col, neighbor_row)
 
-        #check down right
+        # check down right
         neighbor_col = current_cell[0] + 1
         neighbor_row = current_cell[1] + 1
         new_cell = (neighbor_col, neighbor_row)
@@ -205,9 +214,11 @@ class Editor():
         if check_flag == 5:
             return True
         return False
-    #đường chéo phụ
+    # đường chéo phụ
+
     def check_winning_auxiliary_diagonal(self, current_cell):
-        if current_cell not in self.canvas_data: return False
+        if current_cell not in self.canvas_data:
+            return False
         current_index = self.canvas_data[current_cell].get_cell()
         # print(current_index)
         check_flag = 1
@@ -224,11 +235,11 @@ class Editor():
             check_flag += 1
             new_cell = (neighbor_col, neighbor_row)
 
-        #check down right
+        # check down right
         neighbor_col = current_cell[0] + 1
         neighbor_row = current_cell[1] - 1
         new_cell = (neighbor_col, neighbor_row)
-        while neighbor_col <= current_cell[0] + 4  and check_flag != 5:
+        while neighbor_col <= current_cell[0] + 4 and check_flag != 5:
             if not self.check_neighbors_cell(new_cell, current_index):
                 break
             neighbor_col += 1
@@ -239,18 +250,20 @@ class Editor():
         if check_flag == 5:
             return True
         return False
+
     def check_win(self, current_cell):
         if self.check_winning_horizontal(current_cell) or self.check_winning_vertical(current_cell) or self.check_winning_main_diagonal(current_cell) or self.check_winning_auxiliary_diagonal(current_cell):
             # print(f"Player wins!")
             return True
         return False
+
     def alert_winning(self, current_cell):
         _str = ''
         if self.canvas_data[current_cell].get_cell() == 'x':
             _str = 'Player X wins!'
         else:
             _str = 'Player O wins!'
-        
+
         font = pygame.font.Font(None, 36)
         text = font.render(_str, 1, (0, 0, 0))
         text_rect = text.get_rect(center=(WINDOW_WIDTH/2, WINDOW_HEIGHT/2))
@@ -265,15 +278,12 @@ class Editor():
     def run(self):
         if self.flag_playing:
             self.draw_board()
-            self.draw()
-            pygame.draw.circle(self.display_surface, 'red', self.origin, 10)
+            # pygame.draw.circle(self.display_surface, 'red', self.origin, 10)
             if self.check_win(self.last_selected_cell):
                 self.playing = False
                 self.alert_winning(self.last_selected_cell)
             if not self.playing:
                 self.flag_playing = False
-
-        
 
 
 class CanvasTile:
@@ -287,7 +297,7 @@ class CanvasTile:
             return 'x'
         else:
             return 'o'
-        
+
     def get_not_cell(self):
         if self.has_o:
             return 'x'
@@ -295,6 +305,7 @@ class CanvasTile:
             return 'o'
 
     def add_id(self, id):
-        if id == EDITOR_DATA[0]['id']: self.has_x = True
-        elif id == EDITOR_DATA[1]['id']: self.has_o = True
-
+        if id == EDITOR_DATA[0]['id']:
+            self.has_x = True
+        elif id == EDITOR_DATA[1]['id']:
+            self.has_o = True
