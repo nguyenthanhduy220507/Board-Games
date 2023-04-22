@@ -26,3 +26,4 @@ class Caro:
             self.editor.left_mouse_click(x, y)
             print((x, y))
             self.connection.sendto(f'Game:::{x}:::{y}:::'.encode('utf-8'), (self.host, self.port))
+            self.clicked = True
