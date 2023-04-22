@@ -10,6 +10,8 @@ from chat_gui import GUI
 from caro_game.main import Caro
 from settings import WINDOW_SIZE
 
+clickQueue = queue.Queue()
+
 
 class Client:
     def __init__(self, host, port, username):
@@ -37,8 +39,7 @@ class Client:
                 if message[0] == 'Game':
                     x = int(message[1])
                     y = int(message[2])
-                    self.gui.game_gui_window.editor.left_mouse_click(x, y)
-                    self.gui.game_gui_window.clicked = False
+                    clickQueue.put(f'Clicked:::{x}:::{y}')
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError as e:
@@ -126,8 +127,7 @@ class Server:
                 if message[0] == 'Game':
                     x = int(message[1])
                     y = int(message[2])
-                    self.gui.game_gui_window.editor.left_mouse_click(x, y)
-                    self.gui.game_gui_window.clicked = False
+                    clickQueue.put(f'Clicked:::{x}:::{y}')
                 elif message[0] == 'Chat':
                     self.message_queue.put(message[1])
             except OSError as e:
@@ -169,6 +169,11 @@ class PlaySurface:
                 self.game_gui_window.editor.event_loop(event)
                 self.game_gui_window.mouse_event()
 
+            if not clickQueue.empty():
+                message = str(clickQueue.get()).split(":::")
+                self.game_gui_window.editor.left_mouse_click(int(message[1]), int(message[2]))
+                self.game_gui_window.clicked = False
+            
             self.game_gui_window.clock.tick(30)
             
             self.game_gui_window.editor.run()

@@ -87,7 +87,6 @@ class Editor():
             if self.check_win((x, y)):
                 self.playing = False
                 self.alert_winning((x, y))
-        self.draw()
 
     def draw(self):
         for pos, item in self.canvas_data.items():
@@ -278,6 +277,7 @@ class Editor():
     def run(self):
         if self.flag_playing:
             self.draw_board()
+            self.draw()
             # pygame.draw.circle(self.display_surface, 'red', self.origin, 10)
             if self.check_win(self.last_selected_cell):
                 self.playing = False
