@@ -1,14 +1,9 @@
 import pygame
-from caro_game.settings import WINDOW_HEIGHT, WINDOW_WIDTH, TILE_SIZE, EDITOR_DATA, LINE_COLOR, TICK_SOUND_X, TICK_SOUND_O, DRAW_WIN, SOUND_TRACK
+from caro_game.settings import WINDOW_HEIGHT, WINDOW_WIDTH, TILE_SIZE, EDITOR_DATA, LINE_COLOR, TICK_SOUND_X, TICK_SOUND_O, DRAW_WIN, SOUND_TRACK, GAME_SOUNDS
 from pygame.math import Vector2 as vector
 from pygame.mouse import get_pressed as mouse_button
 from pygame.mouse import get_pos as mouse_pos
 
-
-pygame.mixer.pre_init(frequency=44100, size = -16, channels= 2, buffer= 512)
-pygame.mixer.init()
-# Tạo một kênh âm thanh mới để phát các âm thanh X và O
-game_sounds = pygame.mixer.Channel(1)
 
 class Editor():
     def __init__(self, username, competitor_name, cell):
@@ -103,9 +98,9 @@ class Editor():
             if (x, y) not in self.canvas_data:
                 self.canvas_data[(x, y)] = CanvasTile(self.selection_index)
                 if self.selection_index == 'x':
-                    game_sounds.play(TICK_SOUND_X)
+                    GAME_SOUNDS.play(TICK_SOUND_X)
                 else:
-                    game_sounds.play(TICK_SOUND_O)
+                    GAME_SOUNDS.play(TICK_SOUND_O)
             else:
                 return False
             self.last_selected_cell = (x, y)
