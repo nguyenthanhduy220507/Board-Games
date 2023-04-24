@@ -10,6 +10,7 @@ class Caro:
         self.host = host
         self.port = port
         self.username = username
+        self.is_host = is_host
 
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.clock = pygame.time.Clock()
@@ -31,6 +32,9 @@ class Caro:
         self.editor.pan_input(event)
         #bấm enter để chơi lại
         if event.type == pygame.locals.KEYDOWN and event.key == pygame.locals.K_RETURN:
-            self.clicked = False
+            if self.is_host:
+                self.clicked = False
+            else:
+                self.clicked = True
             self.editor.play_again()
             self.connection.sendto(b'Play again', (self.host, self.port))
