@@ -23,6 +23,7 @@ class Client:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.sendto(f'Connected:::{self.username}'.encode('utf-8'), (self.host, self.port))
         self.gui = PlaySurface(self.sock, self.host, self.port, username, self.competitor_name, False)
+        self.gui.game_gui_window.clicked = True
         self.message_queue = queue.Queue()
         self.close_queue = queue.Queue()
 
