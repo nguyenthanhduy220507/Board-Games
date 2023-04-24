@@ -131,7 +131,7 @@ class Server:
                 if message[0] == 'Connected':
                     self.connected = True
                     self.competitor_name = str(message[1])
-                    self.sock.sendto(f'Connected:::{self.username}'.encode('utf-8'), (self.host, self.port))
+                    self.sock.sendto(f'Connected:::{self.username}'.encode('utf-8'), self.addr)
                     break
                 else:
                     self.connected = False
