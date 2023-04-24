@@ -22,6 +22,6 @@ pygame.mixer.init()
 TICK_SOUND_X = pygame.mixer.Sound('./sound/tick_sound_X.wav')
 TICK_SOUND_O = pygame.mixer.Sound('./sound/tick_sound_O.wav')
 DRAW_WIN = pygame.mixer.Sound('./sound/draw_win3.wav')
-# SOUND_TRACK = pygame.mixer.Sound('./sound/sound_track2.wav')
+SOUND_TRACK = pygame.mixer.Sound('./sound/sound_track2.wav')
 # Tạo một kênh âm thanh mới để phát các âm thanh X và O
 GAME_SOUNDS = pygame.mixer.Channel(1)
