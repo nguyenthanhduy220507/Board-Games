@@ -300,7 +300,7 @@ class Editor():
 
     def alert_winning(self, current_cell):
         self.alert_displayed = True
-        if self.canvas_data[current_cell].get_cell() == 'x':
+        if self.canvas_data[current_cell].get_cell() == self.cell:
             _str = f'Player {str(self.username).upper()} wins! Enter to Play again.'
         else:
             _str = f'Player {str(self.competitor_name).upper()} wins! Enter to Play again.'
