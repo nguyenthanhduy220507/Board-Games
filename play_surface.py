@@ -22,7 +22,7 @@ class Client:
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.sendto(f'Connected:::{self.username}'.encode('utf-8'), (self.host, self.port))
-        self.gui = PlaySurface(self.sock, self.host, self.port, username, self.competitor_name)
+        self.gui = PlaySurface(self.sock, self.host, self.port, username, self.competitor_name, False)
         self.message_queue = queue.Queue()
         self.close_queue = queue.Queue()
 
@@ -107,7 +107,7 @@ class Server:
                 loading.draw(surface)
             pygame.display.update()
         loading.disable()
-        self.gui = PlaySurface(self.sock, self.addr[0], self.addr[1], username, self.competitor_name)
+        self.gui = PlaySurface(self.sock, self.addr[0], self.addr[1], username, self.competitor_name, True)
         self.message_queue = queue.Queue()
         self.close_queue = queue.Queue()
         threading.Thread(target=self.receive, daemon=True).start()
@@ -171,10 +171,10 @@ class Server:
 
 
 class PlaySurface:
-    def __init__(self, connection, host, port, username, competitor_name=None):
+    def __init__(self, connection, host, port, username, competitor_name=None, is_host=True):
         self.connection = connection
         self.chat_gui_window = GUI(connection, host, port, username)
-        self.game_gui_window = Caro(connection, host, port, username, competitor_name)
+        self.game_gui_window = Caro(connection, host, port, username, competitor_name, is_host)
 
     def run(self):
         while True:
