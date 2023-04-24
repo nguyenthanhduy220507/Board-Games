@@ -38,7 +38,7 @@ class Client:
                 data, addr = self.sock.recvfrom(1024)
                 if data == b'Play again':
                     self.gui.game_gui_window.editor.play_again()
-                    self.gui.game_gui_window.clicked = False
+                    self.gui.game_gui_window.clicked = True
                     continue
                 message = data.decode('utf-8').split(':::')
                 print(message)
