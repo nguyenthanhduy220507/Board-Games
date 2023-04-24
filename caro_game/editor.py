@@ -1,5 +1,5 @@
 import pygame
-from caro_game.setting import WINDOW_HEIGHT, WINDOW_WIDTH, TILE_SIZE, EDITOR_DATA, LINE_COLOR
+from caro_game.settings import WINDOW_HEIGHT, WINDOW_WIDTH, TILE_SIZE, EDITOR_DATA, LINE_COLOR, TICK_SOUND_X, TICK_SOUND_O, DRAW_WIN, SOUND_TRACK
 from pygame.math import Vector2 as vector
 from pygame.mouse import get_pressed as mouse_button
 from pygame.mouse import get_pos as mouse_pos
@@ -7,17 +7,14 @@ from pygame.mouse import get_pos as mouse_pos
 
 pygame.mixer.pre_init(frequency=44100, size = -16, channels= 2, buffer= 512)
 pygame.mixer.init()
-#chèn âm thanh
-tick_sound_x = pygame.mixer.Sound('sound/tick_sound_X.wav')
-tick_sound_o = pygame.mixer.Sound('sound/tick_sound_O.wav')
-draw_win = pygame.mixer.Sound('sound/draw_win3.wav')
-sound_track = pygame.mixer.Sound('sound/sound_track2.wav')
 # Tạo một kênh âm thanh mới để phát các âm thanh X và O
 game_sounds = pygame.mixer.Channel(1)
 
 class Editor():
-    def __init__(self, username):
+    def __init__(self, username, competitor_name, cell):
         self.username = username
+        self.competitor_name = competitor_name
+        self.cell = cell
 
         self.display_surface = pygame.display.get_surface()
         self.origin = vector()
@@ -27,7 +24,7 @@ class Editor():
         self.support_line_surf = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.canvas_data = {}
         self.last_selected_cell = None
-        self.selection_index = 'x'
+        self.selection_index = cell
 
         self.playing = True
         self.flag_playing = True
@@ -49,9 +46,6 @@ class Editor():
 
         return col, row
 
-    def event_loop(self, event):
-        self.pan_input(event)
-
     def pan_input(self, event):
         # kéo chuột phải
         if event.type == pygame.locals.MOUSEBUTTONDOWN and mouse_button()[2]:
@@ -66,27 +60,22 @@ class Editor():
                 self.origin.y -= event.y * 50
             else:
                 self.origin.x -= event.y * 50
-        # paiing update
         if self.pain_active:
             self.origin = vector(mouse_pos()) - self.pain_offset
-        
-        #bấm enter để chơi lại
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
-                # Xóa bảng chơi và bắt đầu trò chơi mới
-                if self.alert_displayed:
-                    self.canvas_data.clear()
-                    self.playing = True
-                    self.flag_playing = True
-                    self.selection_index = 'x'
-                    self.last_selected_cell = None
-                    self.alert_displayed = False
-                    sound_track.play(-1)
-                return
-            elif event.type == pygame.QUIT:
-                # Kết thúc trò chơi nếu người chơi tắt cửa sổ
-                self.playing = False
-                return
+
+    def play_again(self):
+        # Xóa bảng chơi và bắt đầu trò chơi mới
+        if self.alert_displayed:
+            self.canvas_data.clear()
+            self.playing = True
+            self.flag_playing = True
+            if self.cell == 'x':
+                self.selection_index = 'o'
+            else:
+                self.selection_index = 'x'
+            self.last_selected_cell = None
+            self.alert_displayed = False
+            SOUND_TRACK.play(-1)
 
     def draw_board(self):
         cols = WINDOW_WIDTH // TILE_SIZE
@@ -114,9 +103,9 @@ class Editor():
             if (x, y) not in self.canvas_data:
                 self.canvas_data[(x, y)] = CanvasTile(self.selection_index)
                 if self.selection_index == 'x':
-                    game_sounds.play(tick_sound_x)
+                    game_sounds.play(TICK_SOUND_X)
                 else:
-                    game_sounds.play(tick_sound_o)
+                    game_sounds.play(TICK_SOUND_O)
             else:
                 return False
             self.last_selected_cell = (x, y)
@@ -250,7 +239,6 @@ class Editor():
         new_cell_end = new_cell
 
         if check_flag == 5:
-            print(f'Start: {new_cell_start}, End: {new_cell_end} ')
             self.draw_player_winning_main_draw_player_winning_auxiliary_diagonal_diagonal(new_cell_start, new_cell_end - vector(1, 1))
             return True
         return False
@@ -287,7 +275,6 @@ class Editor():
             new_cell = (neighbor_col, neighbor_row)
         new_cell_end = new_cell
         if check_flag == 5:
-            print(f'Start: {new_cell_start}, End: {new_cell_end} ')
             self.draw_player_winning_main_draw_player_winning_auxiliary_diagonal_diagonal(new_cell_start - vector(0, 1), new_cell_end - vector(1, 0))
             return True
         return False
@@ -318,11 +305,10 @@ class Editor():
 
     def alert_winning(self, current_cell):
         self.alert_displayed = True
-        _str = ''
         if self.canvas_data[current_cell].get_cell() == 'x':
-            _str = f'Player {self.username} wins! Enter to Play again .'
+            _str = f'Player {str(self.username).upper()} wins! Enter to Play again.'
         else:
-            _str = f'Player {self.username} wins! Enter to Play again .'
+            _str = f'Player {str(self.competitor_name).upper()} wins! Enter to Play again.'
 
         font = pygame.font.Font(None, 36)
         text = font.render(_str, 1, (255,255, 255))
@@ -330,7 +316,7 @@ class Editor():
 
         # Draw border around text
         border_rect = text_rect.inflate(10, 10)
-        pygame.draw.rect(self.display_surface, (0, 0, 0, 0.5), border_rect)
+        pygame.draw.rect(self.display_surface, (0, 0, 0, 0.3), border_rect)
 
         # Draw text
         self.display_surface.blit(text, text_rect)
@@ -341,13 +327,13 @@ class Editor():
             self.draw()
             # pygame.draw.circle(self.display_surface, 'red', self.origin, 10)
             if not pygame.mixer.get_busy():
-                sound_track.play(-1)
+                SOUND_TRACK.play(-1)
             if self.check_win(self.last_selected_cell):
                 self.playing = False
                 self.alert_winning(self.last_selected_cell)
                 #music
-                draw_win.play()
-                sound_track.stop()
+                DRAW_WIN.play()
+                SOUND_TRACK.stop()
             if not self.playing:
                 self.flag_playing = False
 

@@ -18,10 +18,12 @@ class Client:
         self.host = host
         self.port = port
         self.username = username
+        self.competitor_name = 'Player 1'
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.sendto(b'Connected', (self.host, self.port))
-        self.gui = PlaySurface(self.sock, self.host, self.port, username)
+        self.sock.sendto(f'Connected:::{self.username}'.encode('utf-8'), (self.host, self.port))
+        self.cell = 'o'
+        self.gui = PlaySurface(self.sock, self.host, self.port, username, self.competitor_name, self.cell)
         self.message_queue = queue.Queue()
         self.close_queue = queue.Queue()
 
@@ -34,9 +36,23 @@ class Client:
         while True:
             try:
                 data, addr = self.sock.recvfrom(1024)
+                if message == b'Play again':
+                    if self.cell == 'x':
+                        self.cell = 'o'
+                        self.gui.game_gui_window.clicked = True
+                    else:
+                        self.cell = 'x'
+                        self.gui.game_gui_window.clicked = False
+                    self.gui.game_gui_window.editor.cell = self.cell
+                    self.gui.game_gui_window.editor.play_again()
+                    continue
                 message = data.decode('utf-8').split(':::')
                 print(message)
-                if message[0] == 'Game':
+                if message[0] == 'Connected':
+                    self.competitor_name = str(message[1])
+                    self.gui.game_gui_window.competitor_name = str(message[1])
+                    self.gui.game_gui_window.editor.competitor_name = str(message[1])
+                elif message[0] == 'Game':
                     x = int(message[1])
                     y = int(message[2])
                     clickQueue.put(f'Clicked:::{x}:::{y}')
@@ -70,11 +86,11 @@ class Server:
         self.host = host
         self.port = port
         self.username = username
+        self.competitor_name = 'Player 2'
 
         self.connected = False
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        # self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
 
         loading = pygame_menu.Menu(
@@ -98,7 +114,8 @@ class Server:
                 loading.draw(surface)
             pygame.display.update()
         loading.disable()
-        self.gui = PlaySurface(self.sock, self.addr[0], self.addr[1], username)
+        self.cell = 'x'
+        self.gui = PlaySurface(self.sock, self.addr[0], self.addr[1], username, self.competitor_name, self.cell)
         self.message_queue = queue.Queue()
         self.close_queue = queue.Queue()
         threading.Thread(target=self.receive, daemon=True).start()
@@ -110,8 +127,11 @@ class Server:
         while True:
             try:
                 data, self.addr = self.sock.recvfrom(1024)
-                if data == b'Connected':
+                message = data.decode('utf-8').split(':::')
+                if message[0] == 'Connected':
                     self.connected = True
+                    self.competitor_name = str(message[1])
+                    self.sock.sendto(f'Connected:::{self.username}'.encode('utf-8'), (self.host, self.port))
                     break
                 else:
                     self.connected = False
@@ -122,6 +142,18 @@ class Server:
         while True:
             try:
                 data, addr = self.sock.recvfrom(1024)
+                if message == b'Play again':
+                    if self.cell == 'x':
+                        self.cell = 'o'
+                        self.gui.game_gui_window.clicked = True
+                    else:
+                        self.cell = 'x'
+                        self.gui.game_gui_window.clicked = False
+                    self.gui.game_gui_window.editor.cell = self.cell
+                    self.gui.game_gui_window.editor.play_again()
+                    self.gui.game_gui_window.clicked = False
+
+                    continue
                 message = data.decode('utf-8').split(':::')
                 print(message)
                 if message[0] == 'Game':
@@ -154,10 +186,10 @@ class Server:
 
 
 class PlaySurface:
-    def __init__(self, connection, host, port, username):
+    def __init__(self, connection, host, port, username, competitor_name=None, cell='x'):
         self.connection = connection
         self.chat_gui_window = GUI(connection, host, port, username)
-        self.game_gui_window = Caro(connection, host, port, username)
+        self.game_gui_window = Caro(connection, host, port, username, competitor_name, cell)
 
     def run(self):
         while True:
@@ -166,7 +198,7 @@ class PlaySurface:
                     self.connection.close()
                     pygame.quit()
                     sys.exit()
-                self.game_gui_window.editor.event_loop(event)
+                self.game_gui_window.event_loop(event)
                 self.game_gui_window.mouse_event()
 
             if not clickQueue.empty():
@@ -174,7 +206,7 @@ class PlaySurface:
                 if self.game_gui_window.editor.left_mouse_click(int(message[1]), int(message[2])):
                     self.game_gui_window.clicked = False
             
-            self.game_gui_window.clock.tick(30)
+            self.game_gui_window.clock.tick(60)
             
             self.game_gui_window.editor.run()
             pygame.display.update()
