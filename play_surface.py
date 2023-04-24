@@ -37,14 +37,9 @@ class Client:
             try:
                 data, addr = self.sock.recvfrom(1024)
                 if data == b'Play again':
-                    if self.cell == 'x':
-                        self.cell = 'o'
-                        self.gui.game_gui_window.clicked = True
-                    else:
-                        self.cell = 'x'
-                        self.gui.game_gui_window.clicked = False
                     self.gui.game_gui_window.editor.cell = self.cell
                     self.gui.game_gui_window.editor.play_again()
+                    self.gui.game_gui_window.clicked = False
                     continue
                 message = data.decode('utf-8').split(':::')
                 print(message)
@@ -143,12 +138,6 @@ class Server:
             try:
                 data, addr = self.sock.recvfrom(1024)
                 if data == b'Play again':
-                    if self.cell == 'x':
-                        self.cell = 'o'
-                        self.gui.game_gui_window.clicked = True
-                    else:
-                        self.cell = 'x'
-                        self.gui.game_gui_window.clicked = False
                     self.gui.game_gui_window.editor.cell = self.cell
                     self.gui.game_gui_window.editor.play_again()
                     self.gui.game_gui_window.clicked = False
