@@ -1,6 +1,5 @@
 import pygame
-from caro_game.settings import WINDOW_HEIGHT, WINDOW_WIDTH, TILE_SIZE, EDITOR_DATA, LINE_COLOR
-# , TICK_SOUND_X, TICK_SOUND_O, DRAW_WIN, SOUND_TRACK, GAME_SOUNDS
+from caro_game.settings import WINDOW_HEIGHT, WINDOW_WIDTH, TILE_SIZE, EDITOR_DATA, LINE_COLOR, TICK_SOUND_X, TICK_SOUND_O, DRAW_WIN, GAME_SOUNDS
 from pygame.math import Vector2 as vector
 from pygame.mouse import get_pressed as mouse_button
 from pygame.mouse import get_pos as mouse_pos
@@ -95,10 +94,10 @@ class Editor():
         if (x, y) != self.last_selected_cell:
             if (x, y) not in self.canvas_data:
                 self.canvas_data[(x, y)] = CanvasTile(self.selection_index)
-                # if self.selection_index == 'x':
-                #     GAME_SOUNDS.play(TICK_SOUND_X)
-                # else:
-                #     GAME_SOUNDS.play(TICK_SOUND_O)
+                if self.selection_index == 'x':
+                    GAME_SOUNDS.play(TICK_SOUND_X)
+                else:
+                    GAME_SOUNDS.play(TICK_SOUND_O)
             else:
                 return False
             self.last_selected_cell = (x, y)
@@ -330,7 +329,7 @@ class Editor():
                 self.playing = False
                 self.alert_winning(self.last_selected_cell)
                 #music
-                # DRAW_WIN.play()
+                DRAW_WIN.play()
                 # SOUND_TRACK.stop()
             if not self.playing:
                 self.flag_playing = False
