@@ -5,7 +5,7 @@ from pygame.mouse import get_pressed as mouse_button
 from caro_game.editor import Editor
 
 class Caro:
-    def __init__(self, connection, host, port, username=None, competitor_name=None, cell='x'):
+    def __init__(self, connection, host, port, username=None, competitor_name=None):
         self.connection = connection
         self.host = host
         self.port = port
@@ -13,7 +13,7 @@ class Caro:
 
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.clock = pygame.time.Clock()
-        self.editor = Editor(username, competitor_name, cell)
+        self.editor = Editor(username, competitor_name)
         #cursor
         surf = load(CURSOR_IMAGE).convert_alpha()
         cursor = pygame.cursors.Cursor((0, 0),surf)

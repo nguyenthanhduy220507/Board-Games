@@ -22,8 +22,7 @@ class Client:
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.sendto(f'Connected:::{self.username}'.encode('utf-8'), (self.host, self.port))
-        self.cell = 'o'
-        self.gui = PlaySurface(self.sock, self.host, self.port, username, self.competitor_name, self.cell)
+        self.gui = PlaySurface(self.sock, self.host, self.port, username, self.competitor_name)
         self.message_queue = queue.Queue()
         self.close_queue = queue.Queue()
 
@@ -37,7 +36,6 @@ class Client:
             try:
                 data, addr = self.sock.recvfrom(1024)
                 if data == b'Play again':
-                    self.gui.game_gui_window.editor.cell = self.cell
                     self.gui.game_gui_window.editor.play_again()
                     self.gui.game_gui_window.clicked = False
                     continue
@@ -109,8 +107,7 @@ class Server:
                 loading.draw(surface)
             pygame.display.update()
         loading.disable()
-        self.cell = 'x'
-        self.gui = PlaySurface(self.sock, self.addr[0], self.addr[1], username, self.competitor_name, self.cell)
+        self.gui = PlaySurface(self.sock, self.addr[0], self.addr[1], username, self.competitor_name)
         self.message_queue = queue.Queue()
         self.close_queue = queue.Queue()
         threading.Thread(target=self.receive, daemon=True).start()
@@ -138,7 +135,6 @@ class Server:
             try:
                 data, addr = self.sock.recvfrom(1024)
                 if data == b'Play again':
-                    self.gui.game_gui_window.editor.cell = self.cell
                     self.gui.game_gui_window.editor.play_again()
                     self.gui.game_gui_window.clicked = False
 
@@ -175,10 +171,10 @@ class Server:
 
 
 class PlaySurface:
-    def __init__(self, connection, host, port, username, competitor_name=None, cell='x'):
+    def __init__(self, connection, host, port, username, competitor_name=None):
         self.connection = connection
         self.chat_gui_window = GUI(connection, host, port, username)
-        self.game_gui_window = Caro(connection, host, port, username, competitor_name, cell)
+        self.game_gui_window = Caro(connection, host, port, username, competitor_name)
 
     def run(self):
         while True:

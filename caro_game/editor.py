@@ -6,10 +6,9 @@ from pygame.mouse import get_pos as mouse_pos
 
 
 class Editor():
-    def __init__(self, username, competitor_name, cell):
+    def __init__(self, username, competitor_name):
         self.username = username
         self.competitor_name = competitor_name
-        self.cell = cell
 
         self.display_surface = pygame.display.get_surface()
         self.origin = vector()
@@ -19,7 +18,7 @@ class Editor():
         self.support_line_surf = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.canvas_data = {}
         self.last_selected_cell = None
-        self.selection_index = cell
+        self.selection_index = 'x'
 
         self.playing = True
         self.flag_playing = True
@@ -64,10 +63,7 @@ class Editor():
             self.canvas_data.clear()
             self.playing = True
             self.flag_playing = True
-            if self.cell == 'x':
-                self.selection_index = 'o'
-            else:
-                self.selection_index = 'x'
+            self.selection_index = 'x'
             self.last_selected_cell = None
             self.alert_displayed = False
             SOUND_TRACK.play(-1)
@@ -294,16 +290,15 @@ class Editor():
 
     def check_win(self, current_cell):
         if self.check_winning_horizontal(current_cell) or self.check_winning_vertical(current_cell) or self.check_winning_main_diagonal(current_cell) or self.check_winning_auxiliary_diagonal(current_cell):
-            # print(f"Player wins!")
             return True
         return False
 
     def alert_winning(self, current_cell):
         self.alert_displayed = True
-        if self.canvas_data[current_cell].get_cell() != self.cell:
-            _str = f'Player {str(self.username).upper()} wins! Enter to Play again.'
-        else:
+        if self.canvas_data[current_cell].get_cell() == 'x':
             _str = f'Player {str(self.competitor_name).upper()} wins! Enter to Play again.'
+        else:
+            _str = f'Player {str(self.username).upper()} wins! Enter to Play again.'
 
         font = pygame.font.Font(None, 36)
         text = font.render(_str, 1, (255,255, 255))
