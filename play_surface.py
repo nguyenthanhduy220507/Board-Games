@@ -36,7 +36,7 @@ class Client:
         while True:
             try:
                 data, addr = self.sock.recvfrom(1024)
-                if message == b'Play again':
+                if data == b'Play again':
                     if self.cell == 'x':
                         self.cell = 'o'
                         self.gui.game_gui_window.clicked = True
@@ -142,7 +142,7 @@ class Server:
         while True:
             try:
                 data, addr = self.sock.recvfrom(1024)
-                if message == b'Play again':
+                if data == b'Play again':
                     if self.cell == 'x':
                         self.cell = 'o'
                         self.gui.game_gui_window.clicked = True
