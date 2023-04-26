@@ -67,7 +67,7 @@ class Editor():
             self.selection_index = 'x'
             self.last_selected_cell = None
             self.alert_displayed = False
-            SOUND_TRACK.play(-1)
+            SOUND_TRACK.play()
 
     def draw_board(self):
         cols = WINDOW_WIDTH // TILE_SIZE
@@ -324,7 +324,7 @@ class Editor():
             self.draw()
             # pygame.draw.circle(self.display_surface, 'red', self.origin, 10)
             if not pygame.mixer.get_busy():
-                SOUND_TRACK.play(-1)
+                SOUND_TRACK.play()
             if self.check_win(self.last_selected_cell):
                 self.playing = False
                 self.alert_winning(self.last_selected_cell)
