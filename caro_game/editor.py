@@ -323,8 +323,8 @@ class Editor():
             self.draw_board()
             self.draw()
             # pygame.draw.circle(self.display_surface, 'red', self.origin, 10)
-            if not pygame.mixer.get_busy():
-                SOUND_TRACK.play()
+            # if not pygame.mixer.get_busy():
+            SOUND_TRACK.play()
             if self.check_win(self.last_selected_cell):
                 self.playing = False
                 self.alert_winning(self.last_selected_cell)
