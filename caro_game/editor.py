@@ -335,6 +335,7 @@ class Editor():
 
             if not self.playing:
                 self.flag_playing = False
+                
 
 
 class CanvasTile:
