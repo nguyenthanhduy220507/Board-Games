@@ -26,4 +26,4 @@ SOUND_TRACK = pygame.mixer.Sound('./sound/sound_track_action .wav')
 
 # Tạo một kênh âm thanh mới để phát các âm thanh X và O
 GAME_SOUNDS = pygame.mixer.Channel(1)
-SOUND_TRACK_SOUNDS = pygame.mixer.Channel(0)
+# SOUND_TRACK_SOUNDS = pygame.mixer.Channel(0)

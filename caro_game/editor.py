@@ -1,5 +1,5 @@
 import pygame
-from caro_game.settings import WINDOW_HEIGHT, WINDOW_WIDTH, TILE_SIZE, EDITOR_DATA, LINE_COLOR, TICK_SOUND_X, TICK_SOUND_O,SOUND_TRACK, DRAW_WIN, GAME_SOUNDS,SOUND_TRACK_SOUNDS
+from caro_game.settings import WINDOW_HEIGHT, WINDOW_WIDTH, TILE_SIZE, EDITOR_DATA, LINE_COLOR, TICK_SOUND_X, TICK_SOUND_O,SOUND_TRACK, DRAW_WIN, GAME_SOUNDS
 from pygame.math import Vector2 as vector
 from pygame.mouse import get_pressed as mouse_button
 from pygame.mouse import get_pos as mouse_pos
@@ -67,7 +67,7 @@ class Editor():
             self.selection_index = 'x'
             self.last_selected_cell = None
             self.alert_displayed = False
-            SOUND_TRACK_SOUNDS.play(SOUND_TRACK)
+            # SOUND_TRACK_SOUNDS.play(SOUND_TRACK)
 
     def draw_board(self):
         cols = WINDOW_WIDTH // TILE_SIZE
@@ -323,15 +323,14 @@ class Editor():
             self.draw_board()
             self.draw()
             # pygame.draw.circle(self.display_surface, 'red', self.origin, 10)
-            if not pygame.mixer.get_busy():
-                SOUND_TRACK_SOUNDS.play(SOUND_TRACK, loops=-1)
+            # if not pygame.mixer.get_busy():
+            #     SOUND_TRACK_SOUNDS.play(SOUND_TRACK, loops=-1)
             if self.check_win(self.last_selected_cell):
                 self.playing = False
                 self.alert_winning(self.last_selected_cell)
                 #music
                 GAME_SOUNDS.play(DRAW_WIN)
                 # SOUND_TRACK_SOUNDS.stop()
-                SOUND_TRACK_SOUNDS.stop()
 
             if not self.playing:
                 self.flag_playing = False
