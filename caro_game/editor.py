@@ -324,13 +324,15 @@ class Editor():
             self.draw()
             # pygame.draw.circle(self.display_surface, 'red', self.origin, 10)
             if not pygame.mixer.get_busy():
-                SOUND_TRACK_SOUNDS.play(SOUND_TRACK)
+                SOUND_TRACK_SOUNDS.play(SOUND_TRACK, loops=-1)
             if self.check_win(self.last_selected_cell):
                 self.playing = False
                 self.alert_winning(self.last_selected_cell)
                 #music
                 GAME_SOUNDS.play(DRAW_WIN)
                 # SOUND_TRACK_SOUNDS.stop()
+                SOUND_TRACK_SOUNDS.stop()
+
             if not self.playing:
                 self.flag_playing = False
 
